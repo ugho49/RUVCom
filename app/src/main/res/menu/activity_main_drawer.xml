@@ -3,6 +3,12 @@
 
     <group android:checkableBehavior="single">
         <item
+            android:id="@+id/signout"
+            android:icon="@drawable/ic_power_settings_new_black_24dp"
+            android:title="Déconnexion" />
+    </group>
+    <!--<group android:checkableBehavior="single">
+        <item
             android:id="@+id/nav_camera"
             android:icon="@drawable/ic_menu_camera"
             android:title="Import" />
@@ -31,6 +37,6 @@
                 android:icon="@drawable/ic_menu_send"
                 android:title="Send" />
         </menu>
-    </item>
+    </item>-->
 
 </menu>
