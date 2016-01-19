@@ -7,22 +7,31 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Contacts;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInApi;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.plus.People;
+import com.google.android.gms.plus.Plus;
+import com.google.android.gms.plus.internal.model.people.PersonEntity;
+import com.google.android.gms.plus.model.people.Person;
 import com.google.gson.Gson;
 
 import org.apache.http.HttpEntity;
@@ -85,6 +94,7 @@ public class SignInActivity extends AppCompatActivity implements
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
+                .requestProfile()
                 .build();
 
         // Build a GoogleApiClient with access to the Google Sign-In API and the
@@ -148,12 +158,19 @@ public class SignInActivity extends AppCompatActivity implements
             // Signed in successfully, show authenticated UI.
             mGoogleSignInAccount = result.getSignInAccount();
             setSigninButtonHidden(true);
+            //Person person = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
+            Log.d(TAG, mGoogleSignInAccount.zzmI());
 
             User user = new User();
             user.setGoogleId(mGoogleSignInAccount.getId());
             user.setEmail(mGoogleSignInAccount.getEmail().toString());
             user.setDisplayName(mGoogleSignInAccount.getDisplayName().toString());
-            user.setImageUrl(mGoogleSignInAccount.getPhotoUrl().toString());
+
+            if(mGoogleSignInAccount.getPhotoUrl() == null) {
+                user.setImageUrl("");
+            } else {
+                user.setImageUrl(mGoogleSignInAccount.getPhotoUrl().toString());
+            }
 
             LoginTask task = new LoginTask(user);
             task.execute();
@@ -208,6 +225,7 @@ public class SignInActivity extends AppCompatActivity implements
     private class LoginTask extends AsyncTask<Void, Void, User> {
 
         private User user;
+        private String bannerUrl = "";
 
         public LoginTask(User user) {
             this.user = user;
@@ -242,6 +260,17 @@ public class SignInActivity extends AppCompatActivity implements
                 Boolean error = resultExists.getBoolean("error");
 
                 String URL_UPDATE_OR_REGISTER = null;
+
+                String urlBanner = "https://www.googleapis.com/plus/v1/people/" +
+                        user.getGoogleId() +
+                        "?fields=cover%2FcoverPhoto%2Furl&key=" +
+                        Config.API_KEY;
+
+                HttpGet httpgetbanner = new HttpGet(urlBanner);
+                HttpResponse responseBanner = httpclient.execute(httpgetbanner);
+                String entityBanner = EntityUtils.toString(responseBanner.getEntity());
+
+                bannerUrl = new JSONObject(entityBanner).getJSONObject("cover").getJSONObject("coverPhoto").getString("url");
 
                 ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
                 params.add(new BasicNameValuePair("token", Config.SECRET_TOKEN));
@@ -287,6 +316,7 @@ public class SignInActivity extends AppCompatActivity implements
             //intent.putExtra("background", person.getImage().getUrl());
             intent.putExtra("avatar", mGoogleSignInAccount.getPhotoUrl().toString());
             intent.putExtra("email", mGoogleSignInAccount.getEmail().toString());
+            intent.putExtra("background", bannerUrl);
             intent.putExtra("displayName", mGoogleSignInAccount.getDisplayName().toString());
             startActivity(intent);
         }

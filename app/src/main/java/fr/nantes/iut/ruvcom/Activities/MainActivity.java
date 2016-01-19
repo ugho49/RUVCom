@@ -3,6 +3,7 @@ package fr.nantes.iut.ruvcom.Activities;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -16,6 +17,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -48,7 +50,7 @@ public class MainActivity extends AppCompatActivity
     private CircularImageView navAvatar;
     private TextView navDisplayName;
     private TextView navEmail;
-    private LinearLayout navBackground;
+    private ImageView navBackground;
 
     private GoogleApiClient mGoogleApiClient;
     private ImageLoader imageLoader;
@@ -70,7 +72,7 @@ public class MainActivity extends AppCompatActivity
         navAvatar = (CircularImageView) navigationHeaderView.findViewById(R.id.nav_avatar);
         navDisplayName = (TextView) navigationHeaderView.findViewById(R.id.nav_display_name);
         navEmail = (TextView) navigationHeaderView.findViewById(R.id.nav_email);
-        navBackground = (LinearLayout) navigationHeaderView.findViewById(R.id.nav_background);
+        navBackground = (ImageView) navigationHeaderView.findViewById(R.id.nav_background);
 
         //navEmail.setText("test");
 
@@ -100,11 +102,12 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         Intent intent = getIntent();
-        loadNavContent(intent.getStringExtra("avatar"), "", intent.getStringExtra("email"), intent.getStringExtra("displayName"));
+        loadNavContent(intent.getStringExtra("avatar"), intent.getStringExtra("background"), intent.getStringExtra("email"), intent.getStringExtra("displayName"));
     }
 
     private void loadNavContent(String avatar, String background, String email, String displayname) {
         imageLoader.displayImage(avatar, navAvatar);
+        imageLoader.displayImage(background, navBackground);
         navDisplayName.setText(displayname);
         navEmail.setText(email);
     }
@@ -163,7 +166,7 @@ public class MainActivity extends AppCompatActivity
         signOutConfirmation.setPositiveButton("Oui", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
+                Auth.GoogleSignInApi.revokeAccess(mGoogleApiClient).setResultCallback(
                         new ResultCallback<Status>() {
                             @Override
                             public void onResult(Status status) {

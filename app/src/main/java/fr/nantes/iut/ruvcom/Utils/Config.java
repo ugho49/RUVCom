@@ -15,7 +15,8 @@ public class Config {
 
     // Secret token pour l'api
     public static final String SECRET_TOKEN = "Ok2CCaEaHngyNPMqPRcE5MkvzIAwpnrJc5zECIO9fAW9dnxI1zppPvRKu7pnU8tbeFrjjke5m8wDacadWWWOFgiLcr1xvdxhUVMA1WWTJkLiFFmFAAGwS";
-
+    // API KEY
+    public static final String API_KEY = "AIzaSyCoFVlSOijLQC1HlQswRQ3-YI8EkeODTZQ";
     // Url de base de L'API
     public static final String BASE_API_URL = "http://dev.ugho-stephan.fr/api/";
     // PARAM : googleID
