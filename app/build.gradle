@@ -34,16 +34,12 @@ dependencies {
     testCompile 'junit:junit:4.12'
     // Google Play Services
     compile 'com.google.android.gms:play-services:8.4.0'
-    // Dependency for Google Sign-In
-    compile 'com.google.android.gms:play-services-auth:8.4.0'
     // App compat
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:design:23.1.1'
     // Other
-    compile 'com.jakewharton:butterknife:7.0.1'
+    //compile 'com.jakewharton:butterknife:7.0.1'
     compile 'com.google.code.gson:gson:2.5'
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
     compile 'com.github.siyamed:android-shape-imageview:0.9.3'
 }
-
-apply plugin: 'com.google.gms.google-services'
