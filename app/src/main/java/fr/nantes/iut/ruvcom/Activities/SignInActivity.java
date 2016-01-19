@@ -8,8 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -20,9 +18,6 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.plus.Plus;
-import com.google.android.gms.plus.model.people.Person;
 
 import fr.nantes.iut.ruvcom.R;
 
@@ -38,9 +33,10 @@ public class SignInActivity extends AppCompatActivity implements
     private static final int RC_SIGN_IN = 9001;
 
     private GoogleApiClient mGoogleApiClient;
-    private GoogleSignInAccount acct;
-    private TextView mStatusTextView;
+    private GoogleSignInAccount mGoogleSignInAccount;
+
     private ProgressDialog mProgressDialog;
+    private SignInButton signInButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,31 +49,24 @@ public class SignInActivity extends AppCompatActivity implements
         }
 
         // Views
-        mStatusTextView = (TextView) findViewById(R.id.status);
+        signInButton = (SignInButton) findViewById(R.id.sign_in_button);
 
         // Button listeners
-        findViewById(R.id.sign_in_button).setOnClickListener(this);
-        findViewById(R.id.sign_out_button).setOnClickListener(this);
-        findViewById(R.id.disconnect_button).setOnClickListener(this);
+        signInButton.setOnClickListener(this);
 
-        // [START configure_signin]
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .build();
-        // [END configure_signin]
 
-        // [START build_client]
         // Build a GoogleApiClient with access to the Google Sign-In API and the
         // options specified by gso.
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
-        // [END build_client]
 
-        // [START customize_button]
         // Customize sign-in button. The sign-in button can be displayed in
         // multiple sizes and color schemes. It can also be contextually
         // rendered based on the requested scopes. For example. a red button may
@@ -85,10 +74,8 @@ public class SignInActivity extends AppCompatActivity implements
         // may be displayed when only basic profile is requested. Try adding the
         // Scopes.PLUS_LOGIN scope to the GoogleSignInOptions to see the
         // difference.
-        SignInButton signInButton = (SignInButton) findViewById(R.id.sign_in_button);
-        signInButton.setSize(SignInButton.SIZE_STANDARD);
+        signInButton.setSize(SignInButton.SIZE_WIDE);
         signInButton.setScopes(gso.getScopeArray());
-        // [END customize_button]
     }
 
     @Override
@@ -117,7 +104,6 @@ public class SignInActivity extends AppCompatActivity implements
         }
     }
 
-    // [START onActivityResult]
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -128,70 +114,32 @@ public class SignInActivity extends AppCompatActivity implements
             handleSignInResult(result);
         }
     }
-    // [END onActivityResult]
 
-    // [START handleSignInResult]
     private void handleSignInResult(GoogleSignInResult result) {
         Log.d(TAG, "handleSignInResult:" + result.isSuccess());
         if (result.isSuccess()) {
             // Signed in successfully, show authenticated UI.
-            acct = result.getSignInAccount();
-            //mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
-            //updateUI(true);
-
+            mGoogleSignInAccount = result.getSignInAccount();
+            setSigninButtonHidden(true);
             //Toast.makeText(getApplicationContext(), "Connexion réussie", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             //intent.putExtra("background", person.getImage().getUrl());
-            intent.putExtra("avatar", acct.getPhotoUrl().toString());
-            intent.putExtra("email", acct.getEmail().toString());
-            intent.putExtra("displayName", acct.getDisplayName().toString());
+            intent.putExtra("avatar", mGoogleSignInAccount.getPhotoUrl().toString());
+            intent.putExtra("email", mGoogleSignInAccount.getEmail().toString());
+            intent.putExtra("displayName", mGoogleSignInAccount.getDisplayName().toString());
             startActivity(intent);
         } else {
-            // Signed out, show unauthenticated UI.
-            updateUI(false);
+            setSigninButtonHidden(false);
         }
     }
-    // [END handleSignInResult]
 
-    // [START signIn]
     private void signIn() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
-    // [END signIn]
-
-    // [START signOut]
-    private void signOut() {
-        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
-                new ResultCallback<Status>() {
-                    @Override
-                    public void onResult(Status status) {
-                        // [START_EXCLUDE]
-                        updateUI(false);
-                        // [END_EXCLUDE]
-                    }
-                });
-    }
-    // [END signOut]
-
-    // [START revokeAccess]
-    private void revokeAccess() {
-        Auth.GoogleSignInApi.revokeAccess(mGoogleApiClient).setResultCallback(
-                new ResultCallback<Status>() {
-                    @Override
-                    public void onResult(Status status) {
-                        // [START_EXCLUDE]
-                        updateUI(false);
-                        // [END_EXCLUDE]
-                    }
-                });
-    }
-    // [END revokeAccess]
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        // An unresolvable error has occurred and Google APIs (including Sign-In) will not
-        // be available.
         Log.d(TAG, "onConnectionFailed:" + connectionResult);
     }
 
@@ -211,15 +159,11 @@ public class SignInActivity extends AppCompatActivity implements
         }
     }
 
-    private void updateUI(boolean signedIn) {
+    private void setSigninButtonHidden(boolean signedIn) {
         if (signedIn) {
             findViewById(R.id.sign_in_button).setVisibility(View.GONE);
-            findViewById(R.id.sign_out_and_disconnect).setVisibility(View.VISIBLE);
         } else {
-            mStatusTextView.setText(R.string.signed_out);
-
             findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
-            findViewById(R.id.sign_out_and_disconnect).setVisibility(View.GONE);
         }
     }
 
@@ -228,12 +172,6 @@ public class SignInActivity extends AppCompatActivity implements
         switch (v.getId()) {
             case R.id.sign_in_button:
                 signIn();
-                break;
-            case R.id.sign_out_button:
-                signOut();
-                break;
-            case R.id.disconnect_button:
-                revokeAccess();
                 break;
         }
     }
