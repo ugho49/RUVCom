@@ -37,7 +37,7 @@
             android:id="@+id/imageButton"
             android:src="@drawable/ic_send_black_24dp"
             android:scaleType="fitCenter"
-            android:background="#eee"
+            android:background="@drawable/roundcorner"
             android:layout_weight="9" />
     </LinearLayout>
 </LinearLayout>
