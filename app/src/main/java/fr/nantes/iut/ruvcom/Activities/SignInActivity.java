@@ -148,8 +148,7 @@ public class SignInActivity extends AppCompatActivity implements
                 user.setImageUrl(mGoogleSignInAccount.getPhotoUrl().toString());
             }
 
-            LoginTask task = new LoginTask(user);
-            task.execute();
+            new LoginTask(user).execute();
         } else {
             setSigninButtonHidden(false);
         }
@@ -227,11 +226,16 @@ public class SignInActivity extends AppCompatActivity implements
                 String displayName   = URLEncoder.encode(user.getDisplayName(), "UTF-8");
                 String email         = URLEncoder.encode(user.getEmail(), "UTF-8");
                 String imageURL      = user.getImageUrl();
-                String coverURL      = new Requestor(URL_COVER.toString())
-                                                .get()
-                                                .getJSONObject("cover")
-                                                .getJSONObject("coverPhoto")
-                                                .getString("url");
+                String coverURL      = "";
+
+                JSONObject coverObj = new Requestor(URL_COVER.toString()).get();
+
+                if (!coverObj.isNull("cover")) {
+                    if (!coverObj.getJSONObject("cover").isNull("coverPhoto")) {
+                        coverURL = coverObj.getJSONObject("cover").getJSONObject("coverPhoto").getString("url");
+                    }
+                }
+
 
                 String URL_USER_EXIST = String.format(Config.API_USER_EXIST, googleID);
 

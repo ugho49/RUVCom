@@ -1,8 +1,10 @@
 package fr.nantes.iut.ruvcom.Activities;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -17,6 +19,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,8 +32,21 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
+
+import fr.nantes.iut.ruvcom.Adapter.ListViewConversationAdapter;
+import fr.nantes.iut.ruvcom.Bean.Conversation;
 import fr.nantes.iut.ruvcom.Bean.User;
 import fr.nantes.iut.ruvcom.R;
+import fr.nantes.iut.ruvcom.Utils.Config;
+import fr.nantes.iut.ruvcom.Utils.Requestor;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
@@ -46,10 +62,14 @@ public class MainActivity extends AppCompatActivity
     private NavigationView navigationView;
     private ActionBarDrawerToggle toggle;
 
+    private ProgressDialog mProgressDialog;
+
     private CircularImageView navAvatar;
     private TextView navDisplayName;
     private TextView navEmail;
     private ImageView navBackground;
+
+    private ListView convListView;
 
     private GoogleApiClient mGoogleApiClient;
     private ImageLoader imageLoader;
@@ -69,6 +89,7 @@ public class MainActivity extends AppCompatActivity
         fab = (FloatingActionButton) findViewById(R.id.fab);
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         navigationView = (NavigationView) findViewById(R.id.nav_view);
+        convListView = (ListView) findViewById(R.id.listViewConversation);
 
         View navigationHeaderView = navigationView.getHeaderView(0);
         navAvatar = (CircularImageView) navigationHeaderView.findViewById(R.id.nav_avatar);
@@ -104,6 +125,24 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         loadNavContent();
+
+        new getConvTask().execute();
+    }
+
+    private void showProgressDialog() {
+        if (mProgressDialog == null) {
+            mProgressDialog = new ProgressDialog(this);
+            mProgressDialog.setMessage(getString(R.string.loading));
+            mProgressDialog.setIndeterminate(true);
+        }
+
+        mProgressDialog.show();
+    }
+
+    private void hideProgressDialog() {
+        if (mProgressDialog != null && mProgressDialog.isShowing()) {
+            mProgressDialog.hide();
+        }
     }
 
     private void loadNavContent() {
@@ -204,5 +243,58 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
         Log.d(TAG, "onConnectionFailed:" + connectionResult);
+    }
+
+    private void loadListView(List<Conversation> conversationList) {
+        ListViewConversationAdapter adapter = new ListViewConversationAdapter(getApplicationContext(), conversationList);
+        convListView.setAdapter(adapter);
+    }
+
+    private class getConvTask extends AsyncTask<Void, Void, List<Conversation>> {
+
+        @Override
+        protected void onPreExecute() {
+            showProgressDialog();
+        }
+
+        @Override
+        protected List<Conversation> doInBackground(Void... u) {
+
+            List<Conversation> result = new ArrayList<>();
+
+            try{
+                String URL = String.format(Config.API_CONVERSATIONS_GET, String.valueOf(user.getId()));
+
+                JSONObject json = new Requestor(URL).get();
+                JSONArray conv_array = null;
+                if (json != null) {
+                    if (!json.isNull("data")) {
+                        conv_array = json.getJSONArray("data");
+                    }
+                }
+                
+                if (conv_array != null) {
+                    for(int i = 0 ; i < conv_array.length(); i++){
+                        JSONObject convObj = conv_array.getJSONObject(i);
+
+                        if (convObj != null) {
+                            result.add(new Conversation(convObj));
+                        }
+                    }
+                }
+            }
+            catch(Exception ex) {
+                Log.d(TAG, "Fail : " + ex.getMessage());
+            }
+
+            return result;
+        }
+
+        // onPostExecute displays the results of the AsyncTask.
+        @Override
+        protected void onPostExecute(List<Conversation> result) {
+            loadListView(result);
+            hideProgressDialog();
+        }
     }
 }

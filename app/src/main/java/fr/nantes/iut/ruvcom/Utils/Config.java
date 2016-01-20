@@ -27,4 +27,6 @@ public class Config {
     public static final String API_USER_CREATE = BASE_API_URL + "createUser/%s/%s/%s";
     // PARAM : id, googleID, displayName, email
     public static final String API_USER_UPDATE = BASE_API_URL + "updateUser/%s/%s/%s/%s";
+    // PARAM : id
+    public static final String API_CONVERSATIONS_GET = BASE_API_URL + "getConversations/%s";
 }
