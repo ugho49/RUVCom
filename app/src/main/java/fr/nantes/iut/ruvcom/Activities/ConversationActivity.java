@@ -83,7 +83,7 @@ public class ConversationActivity extends AppCompatActivity implements View.OnCl
         }
     }
 
-    private class getMessagesTask extends AsyncTask<Void, Void, List<Message>> {
+    private class getMessagesTask extends AsyncTask<Void, Void, String> {
 
         @Override
         protected void onPreExecute() {
@@ -91,9 +91,9 @@ public class ConversationActivity extends AppCompatActivity implements View.OnCl
         }
 
         @Override
-        protected List<Message> doInBackground(Void... u) {
+        protected String doInBackground(Void... u) {
 
-            List<Message> result = new ArrayList<>();
+            String result = "";
 
             try{
                 String URL = String.format(Config.API_MESSAGE_POST, String.valueOf(user.getId()), String.valueOf(distantUser.getId()));
@@ -103,20 +103,10 @@ public class ConversationActivity extends AppCompatActivity implements View.OnCl
                 params.add(new BasicNameValuePair("message", messageToSend));
 
                 JSONObject json = new Requestor(URL).post(params);
-                JSONArray messages_array = null;
+                JSONArray message = null;
                 if (json != null) {
                     if (!json.isNull("data")) {
-                        messages_array = json.getJSONArray("data");
-                    }
-                }
-
-                if (messages_array != null) {
-                    for(int i = 0 ; i < messages_array.length(); i++){
-                        JSONObject convObj = messages_array.getJSONObject(i);
-
-                        if (convObj != null) {
-                            result.add(new Message(convObj));
-                        }
+                        message = json.getJSONArray("data");
                     }
                 }
             }
@@ -129,7 +119,7 @@ public class ConversationActivity extends AppCompatActivity implements View.OnCl
 
         // onPostExecute displays the results of the AsyncTask.
         @Override
-        protected void onPostExecute(List<Message> result) {
+        protected void onPostExecute(String result) {
             message.setText("");
             Toast.makeText(getBaseContext(), "Message envoyé !", Toast.LENGTH_SHORT).show();
         }
