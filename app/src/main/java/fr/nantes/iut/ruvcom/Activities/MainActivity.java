@@ -3,7 +3,6 @@ package fr.nantes.iut.ruvcom.Activities;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -18,7 +17,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +29,7 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import fr.nantes.iut.ruvcom.Bean.User;
 import fr.nantes.iut.ruvcom.R;
 
 public class MainActivity extends AppCompatActivity
@@ -55,12 +54,15 @@ public class MainActivity extends AppCompatActivity
     private GoogleApiClient mGoogleApiClient;
     private ImageLoader imageLoader;
 
+    private static User user;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        user = (User) getIntent().getSerializableExtra("user");
         imageLoader = ImageLoader.getInstance();
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -101,15 +103,14 @@ public class MainActivity extends AppCompatActivity
 
         navigationView.setNavigationItemSelectedListener(this);
 
-        Intent intent = getIntent();
-        loadNavContent(intent.getStringExtra("avatar"), intent.getStringExtra("background"), intent.getStringExtra("email"), intent.getStringExtra("displayName"));
+        loadNavContent();
     }
 
-    private void loadNavContent(String avatar, String background, String email, String displayname) {
-        imageLoader.displayImage(avatar, navAvatar);
-        imageLoader.displayImage(background, navBackground);
-        navDisplayName.setText(displayname);
-        navEmail.setText(email);
+    private void loadNavContent() {
+        imageLoader.displayImage(user.getImageUrl(), navAvatar);
+        imageLoader.displayImage(user.getCoverImageUrl(), navBackground);
+        navDisplayName.setText(user.getDisplayName());
+        navEmail.setText(user.getEmail());
     }
 
     @Override

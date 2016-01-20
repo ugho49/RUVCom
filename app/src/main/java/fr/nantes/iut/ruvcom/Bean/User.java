@@ -1,5 +1,10 @@
 package fr.nantes.iut.ruvcom.Bean;
 
+import android.util.Log;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Created by ughostephan on 19/01/2016.
  */
@@ -10,6 +15,34 @@ public class User extends BaseBean {
     private String displayName;
     private String email;
     private String imageUrl;
+    private String coverImageUrl;
+
+    public User() {
+        // Default constructor
+    }
+
+    public User(JSONObject data) {
+        if (data != null) {
+            try {
+                this.id = data.getInt("id");
+                this.googleId = data.getString("googleID");
+                this.displayName = data.getString("displayName");
+                this.email = data.getString("email");
+                this.imageUrl = data.getString("imageUrl");
+                this.coverImageUrl = data.getString("coverImageUrl");
+            } catch (JSONException e) {
+                Log.e("USER", e.getMessage());
+            }
+        }
+    }
+
+    public String getCoverImageUrl() {
+        return coverImageUrl;
+    }
+
+    public void setCoverImageUrl(String coverImageUrl) {
+        this.coverImageUrl = coverImageUrl;
+    }
 
     public int getId() {
         return id;

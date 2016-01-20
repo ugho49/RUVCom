@@ -1,61 +1,37 @@
 package fr.nantes.iut.ruvcom.Activities;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Contacts;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInApi;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Scope;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.plus.People;
-import com.google.android.gms.plus.Plus;
-import com.google.android.gms.plus.internal.model.people.PersonEntity;
-import com.google.android.gms.plus.model.people.Person;
-import com.google.gson.Gson;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.BasicResponseHandler;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
 import fr.nantes.iut.ruvcom.Bean.User;
 import fr.nantes.iut.ruvcom.R;
 import fr.nantes.iut.ruvcom.Utils.Config;
+import fr.nantes.iut.ruvcom.Utils.Requestor;
 
 /**
  * Activity to demonstrate basic retrieval of the Google user's ID, email address, and basic
@@ -225,7 +201,6 @@ public class SignInActivity extends AppCompatActivity implements
     private class LoginTask extends AsyncTask<Void, Void, User> {
 
         private User user;
-        private String bannerUrl = "";
 
         public LoginTask(User user) {
             this.user = user;
@@ -242,64 +217,52 @@ public class SignInActivity extends AppCompatActivity implements
             User result = null;
 
             try{
+                StringBuilder URL_COVER = new StringBuilder();
+                URL_COVER.append("https://www.googleapis.com/plus/v1/people/");
+                URL_COVER.append(user.getGoogleId());
+                URL_COVER.append("?fields=cover%2FcoverPhoto%2Furl&key=");
+                URL_COVER.append(Config.API_KEY);
 
                 String googleID      = URLEncoder.encode(user.getGoogleId(), "UTF-8");
                 String displayName   = URLEncoder.encode(user.getDisplayName(), "UTF-8");
                 String email         = URLEncoder.encode(user.getEmail(), "UTF-8");
                 String imageURL      = user.getImageUrl();
-
-                HttpClient httpclient = new DefaultHttpClient();
+                String coverURL      = new Requestor(URL_COVER.toString())
+                                                .get()
+                                                .getJSONObject("cover")
+                                                .getJSONObject("coverPhoto")
+                                                .getString("url");
 
                 String URL_USER_EXIST = String.format(Config.API_USER_EXIST, googleID);
 
-                HttpGet httpget = new HttpGet(URL_USER_EXIST);
-                HttpResponse responseUserExist = httpclient.execute(httpget);
-                String entityUserExist = EntityUtils.toString(responseUserExist.getEntity());
-
-                JSONObject resultExists = new JSONObject(entityUserExist);
+                JSONObject resultExists = new Requestor(URL_USER_EXIST).get();
                 Boolean error = resultExists.getBoolean("error");
 
                 String URL_UPDATE_OR_REGISTER = null;
 
-                String urlBanner = "https://www.googleapis.com/plus/v1/people/" +
-                        user.getGoogleId() +
-                        "?fields=cover%2FcoverPhoto%2Furl&key=" +
-                        Config.API_KEY;
-
-                HttpGet httpgetbanner = new HttpGet(urlBanner);
-                HttpResponse responseBanner = httpclient.execute(httpgetbanner);
-                String entityBanner = EntityUtils.toString(responseBanner.getEntity());
-
-                bannerUrl = new JSONObject(entityBanner).getJSONObject("cover").getJSONObject("coverPhoto").getString("url");
-
                 ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
                 params.add(new BasicNameValuePair("token", Config.SECRET_TOKEN));
                 params.add(new BasicNameValuePair("imageUrl", imageURL));
+                params.add(new BasicNameValuePair("coverImageUrl", coverURL));
 
                 if(error) {
-
-                    String message = resultExists.getString("message");
-
-                    if("No user found !".equals(message)) {
-                        URL_UPDATE_OR_REGISTER = String.format(Config.API_USER_CREATE, googleID, displayName, email);
-                    }
-
+                    URL_UPDATE_OR_REGISTER = String.format(Config.API_USER_CREATE, googleID, displayName, email);
                 } else {
                     String userId = String.valueOf(resultExists.getJSONObject("data").getInt("id"));
                     URL_UPDATE_OR_REGISTER = String.format(Config.API_USER_UPDATE, userId, googleID, displayName, email);
                 }
 
-                HttpPost httpPost = new HttpPost(URL_UPDATE_OR_REGISTER);
-                httpPost.setEntity(new UrlEncodedFormEntity(params));
-                HttpResponse responseUpdateOrRegister = httpclient.execute(httpPost);
-                String entityUpdateOrRegister = EntityUtils.toString(responseUpdateOrRegister.getEntity());
+                JSONObject json = new Requestor(URL_UPDATE_OR_REGISTER).post(params);
+                JSONObject data = null;
+                if (json != null) {
+                    if (!json.isNull("data")) {
+                        data = json.getJSONObject("data");
+                    }
+                }
 
-                JSONObject resultUpdateOrRegister = new JSONObject(entityUpdateOrRegister);
-
-                //result = entityUpdateOrRegister;
+                result = new User(data);
             }
-            catch(Exception ex)
-            {
+            catch(Exception ex) {
                 Log.d(TAG, "Fail : " + ex.getMessage());
             }
 
@@ -311,14 +274,13 @@ public class SignInActivity extends AppCompatActivity implements
         protected void onPostExecute(User result) {
             hideProgressDialog();
 
-            //Toast.makeText(getApplicationContext(), "Connexion réussie", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-            //intent.putExtra("background", person.getImage().getUrl());
-            intent.putExtra("avatar", mGoogleSignInAccount.getPhotoUrl().toString());
-            intent.putExtra("email", mGoogleSignInAccount.getEmail().toString());
-            intent.putExtra("background", bannerUrl);
-            intent.putExtra("displayName", mGoogleSignInAccount.getDisplayName().toString());
-            startActivity(intent);
+            if (result == null) {
+                Toast.makeText(getApplicationContext(), "Erreur d'authentification", Toast.LENGTH_SHORT).show();
+            } else {
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                intent.putExtra("user", result);
+                startActivity(intent);
+            }
         }
     }
 }
