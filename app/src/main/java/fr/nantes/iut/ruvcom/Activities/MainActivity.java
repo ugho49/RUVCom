@@ -53,7 +53,6 @@ public class MainActivity extends AppCompatActivity
 
     private static final String TAG = "MainActivity";
 
-
     private Toolbar toolbar;
     private FloatingActionButton fab;
     private DrawerLayout drawer;

@@ -57,11 +57,12 @@ public class ListViewConversationAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        // TODO Auto-generated method stub
         ViewHolder holder = null;
         View v = convertView;
+        LayoutInflater vi = (LayoutInflater) _c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        Conversation conversation = getItem(position);
+
         if (v == null) {
-            LayoutInflater vi = (LayoutInflater) _c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             v = vi.inflate(R.layout.item_conversation, null);
             holder = new ViewHolder();
             holder.avatar = (CircularImageView) v.findViewById(R.id.item_conv_avatar);
@@ -74,24 +75,20 @@ public class ListViewConversationAdapter extends BaseAdapter {
             holder = (ViewHolder) v.getTag();
         }
 
-        String url_image = list.get(position).getUser().getImageUrl();
+        final String url_image = conversation.getUser().getImageUrl();
+        final String lastDate = new SimpleDateFormat("dd/MM/yyyy - HH:mm").format(conversation.getLastDateMessage());
 
-        if(!url_image.equals(""))
-        {
+        if(!url_image.equals("")) {
             imageLoader.displayImage(url_image, holder.avatar);
-        }
-        else {
+        } else {
             holder.avatar.setImageResource(R.drawable.ic_project);
         }
 
-        holder.displayName.setText(list.get(position).getUser().getDisplayName());
-        holder.email.setText(list.get(position).getUser().getEmail());
-
-        String lastDate = new SimpleDateFormat("dd/MM/yyyy - HH:mm").format(list.get(position).getLastDateMessage());
-
+        holder.displayName.setText(conversation.getUser().getDisplayName());
+        holder.email.setText(conversation.getUser().getEmail());
         holder.lastDateMessage.setText(lastDate);
 
-        if (list.get(position).getNotification()) {
+        if (conversation.getNotification()) {
             holder.notification.setVisibility(View.VISIBLE);
         } else {
             holder.notification.setVisibility(View.INVISIBLE);
