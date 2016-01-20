@@ -38,13 +38,13 @@ public class ListViewConversationAdapter extends BaseAdapter {
     }
 
     @Override
-    public Object getItem(int position) {
+    public Conversation getItem(int position) {
         return list.get(position);
     }
 
     @Override
     public long getItemId(int position) {
-        return position;
+        return (long) getItem(position).getUser().getId();
     }
 
     private static class ViewHolder {

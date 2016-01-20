@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -32,12 +33,9 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,7 +48,7 @@ import fr.nantes.iut.ruvcom.Utils.Requestor;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
-        GoogleApiClient.OnConnectionFailedListener {
+        GoogleApiClient.OnConnectionFailedListener, AdapterView.OnItemClickListener {
 
 
     private static final String TAG = "MainActivity";
@@ -75,6 +73,8 @@ public class MainActivity extends AppCompatActivity
     private ImageLoader imageLoader;
 
     private static User user;
+
+    private ListViewConversationAdapter adapter;
 
 
     @Override
@@ -108,6 +108,8 @@ public class MainActivity extends AppCompatActivity
                         .setAction("Action", null).show();
             }
         });
+
+        convListView.setOnItemClickListener(this);
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
@@ -246,8 +248,13 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void loadListView(List<Conversation> conversationList) {
-        ListViewConversationAdapter adapter = new ListViewConversationAdapter(getApplicationContext(), conversationList);
+        adapter = new ListViewConversationAdapter(getApplicationContext(), conversationList);
         convListView.setAdapter(adapter);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Toast.makeText(getApplicationContext(), String.valueOf("Sender : " + user.getId() + " / Receiver : " + adapter.getItemId(position)), Toast.LENGTH_SHORT).show();
     }
 
     private class getConvTask extends AsyncTask<Void, Void, List<Conversation>> {
