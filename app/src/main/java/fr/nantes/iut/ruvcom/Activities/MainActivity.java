@@ -258,6 +258,8 @@ public class MainActivity extends AppCompatActivity
         conversationIntent.putExtra("user", user);
         conversationIntent.putExtra("distantUser", adapter.getItem(position).getUser());
         startActivity(conversationIntent);
+
+        overridePendingTransition(R.anim.in_right_to_left, R.anim.out_right_to_left);
     }
 
     private class getConvTask extends AsyncTask<Void, Void, List<Conversation>> {
