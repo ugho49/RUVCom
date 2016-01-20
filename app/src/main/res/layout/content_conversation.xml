@@ -13,7 +13,7 @@
     <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/listView"
+        android:id="@+id/messagesList"
         android:layout_weight="29"/>
 
     <LinearLayout
@@ -27,14 +27,14 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/editText"
+            android:id="@+id/message"
             android:layout_weight="2"/>
 
         <ImageButton
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:padding="8dp"
-            android:id="@+id/imageButton"
+            android:id="@+id/sendButton"
             android:src="@drawable/ic_send_black_24dp"
             android:scaleType="fitCenter"
             android:background="@drawable/roundcorner"
