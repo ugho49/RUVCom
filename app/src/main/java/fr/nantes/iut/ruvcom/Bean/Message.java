@@ -1,5 +1,12 @@
 package fr.nantes.iut.ruvcom.Bean;
 
+import android.util.Log;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -14,6 +21,26 @@ public class Message extends BaseBean {
     private Photo photo;
     private boolean isRead;
     private Date dateTime;
+
+    public Message(JSONObject data) {
+        if (data != null) {
+            try {
+                this.id = data.getInt("id");
+                this.idUserSender = data.getInt("idUserSender");
+                this.idUserReceiver = data.getInt("idUserReceiver");
+                this.message = data.getString("message");
+                this.photo = new Photo(data.getJSONObject("photo"));
+                this.isRead = data.getBoolean("isRead");
+
+                Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(data.getString("dateTime"));
+                this.dateTime = date;
+            } catch (JSONException e) {
+                Log.e("MESSAGE", e.getMessage());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     public int getId() {
         return id;

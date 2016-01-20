@@ -29,4 +29,9 @@ public class Config {
     public static final String API_USER_UPDATE = BASE_API_URL + "updateUser/%s/%s/%s/%s";
     // PARAM : id
     public static final String API_CONVERSATIONS_GET = BASE_API_URL + "getConversations/%s";
+    // PARAM : idSender, idReceiver
+    public static final String API_MESSAGES_GET = BASE_API_URL + "getMessages/%s/%s";
+    // PARAM : idSender, idReceiver
+    public static final String API_MESSAGE_POST = BASE_API_URL + "createMessage/%s/%s";
+
 }

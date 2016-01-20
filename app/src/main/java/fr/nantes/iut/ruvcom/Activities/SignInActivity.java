@@ -271,7 +271,6 @@ public class SignInActivity extends AppCompatActivity implements
                     }
                 }
 
-
                 String URL_USER_EXIST = String.format(Config.API_USER_EXIST, googleID);
 
                 JSONObject resultExists = new Requestor(URL_USER_EXIST).get();
@@ -279,7 +278,7 @@ public class SignInActivity extends AppCompatActivity implements
 
                 String URL_UPDATE_OR_REGISTER = null;
 
-                ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
+                ArrayList<NameValuePair> params = new ArrayList<>();
                 params.add(new BasicNameValuePair("token", Config.SECRET_TOKEN));
                 params.add(new BasicNameValuePair("imageUrl", imageURL));
                 params.add(new BasicNameValuePair("coverImageUrl", coverURL));
