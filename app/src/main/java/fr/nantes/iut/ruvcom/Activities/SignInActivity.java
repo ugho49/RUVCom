@@ -1,5 +1,6 @@
 package fr.nantes.iut.ruvcom.Activities;
 
+import android.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
@@ -73,6 +74,8 @@ public class SignInActivity extends AppCompatActivity implements
 
         // Button listeners
         signInButton.setOnClickListener(this);
+
+        FragmentManager fm = getFragmentManager();
 
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
