@@ -21,16 +21,23 @@
         android:layout_height="wrap_content"
         android:padding="5dp"
         android:layout_weight="1"
-        android:weightSum="10"
-        android:orientation="horizontal">
+        android:weightSum="11"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
         <EditText
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/editText"
             android:layout_weight="2"/>
-        <Button
+
+        <ImageButton
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="8"/>
+            android:layout_height="50dp"
+            android:padding="8dp"
+            android:id="@+id/imageButton"
+            android:src="@drawable/ic_send_black_24dp"
+            android:scaleType="fitCenter"
+            android:background="#eee"
+            android:layout_weight="9" />
     </LinearLayout>
 </LinearLayout>
