@@ -36,6 +36,10 @@ public class ListViewMessagesAdapter extends BaseAdapter {
         this.distantUser = distantUser;
     }
 
+    public void setList(List<Message> list) {
+        this.list = list;
+    }
+
     @Override
     public int getCount() {
         return list.size();
@@ -60,46 +64,42 @@ public class ListViewMessagesAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder = null;
-        LayoutInflater vi = (LayoutInflater) _c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);;
-        View v = convertView;
+        View v = null;
         Message message = getItem(position);
 
-        if (v == null) {
+        LayoutInflater vi = (LayoutInflater) _c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        holder = new ViewHolder();
 
-            holder = new ViewHolder();
-
-            if (!message.getPhoto().getUrl().isEmpty()) {
-                // MESSAGES PHOTO
-                if (message.getIdUserSender() == user.getId()) {
-                    // MY MESSAGE PHOTO
-                    v = vi.inflate(R.layout.item_message_photo_right, null);
-                    holder.avatar = (BubbleImageView) v.findViewById(R.id.item_message_photo_right_avatar);
-                    holder.image = (ImageView) v.findViewById(R.id.item_message_photo_right_image);
-                } else {
-                    // MESSAGE PHOTO FROM DISTANT USER
-                    v = vi.inflate(R.layout.item_message_photo_right, null);
-                    holder.avatar = (BubbleImageView) v.findViewById(R.id.item_message_photo_left_avatar);
-                    holder.image = (ImageView) v.findViewById(R.id.item_message_photo_left_image);
-                }
+        if (message.getPhoto() != null) {
+            // MESSAGES PHOTO
+            if (message.getIdUserSender() == user.getId()) {
+                // MY MESSAGE PHOTO
+                v = vi.inflate(R.layout.item_message_photo_right, null);
+                holder.avatar = (BubbleImageView) v.findViewById(R.id.item_message_photo_right_avatar);
+                holder.image = (ImageView) v.findViewById(R.id.item_message_photo_right_image);
             } else {
-                // MESSAGES TEXT
-                if (message.getIdUserSender() == user.getId()) {
-                    // MY MESSAGE TEXT
-                    v = vi.inflate(R.layout.item_message_right, null);
-                    holder.avatar = (BubbleImageView) v.findViewById(R.id.item_message_right_avatar);
-                    holder.message = (TextView) v.findViewById(R.id.item_message_right_avatar);
-                } else {
-                    // MESSAGE TEXT FROM DISTANT USER
-                    v = vi.inflate(R.layout.item_message_left, null);
-                    holder.avatar = (BubbleImageView) v.findViewById(R.id.item_message_right_avatar);
-                    holder.message = (TextView) v.findViewById(R.id.item_message_right_avatar);
-                }
+                // MESSAGE PHOTO FROM DISTANT USER
+                v = vi.inflate(R.layout.item_message_photo_right, null);
+                holder.avatar = (BubbleImageView) v.findViewById(R.id.item_message_photo_left_avatar);
+                holder.image = (ImageView) v.findViewById(R.id.item_message_photo_left_image);
             }
-
-            v.setTag(holder);
         } else {
-            holder = (ViewHolder) v.getTag();
+            // MESSAGES TEXT
+            if (message.getIdUserSender() == user.getId()) {
+                // MY MESSAGE TEXT
+                v = vi.inflate(R.layout.item_message_right, null);
+                holder.avatar = (BubbleImageView) v.findViewById(R.id.item_message_right_avatar);
+                holder.message = (TextView) v.findViewById(R.id.item_message_right_text);
+            } else {
+                // MESSAGE TEXT FROM DISTANT USER
+                v = vi.inflate(R.layout.item_message_left, null);
+                holder.avatar = (BubbleImageView) v.findViewById(R.id.item_message_left_avatar);
+                holder.message = (TextView) v.findViewById(R.id.item_message_left_text);
+            }
         }
+
+        v.setTag(holder);
+
 
         String url_image = "";
 
@@ -117,7 +117,7 @@ public class ListViewMessagesAdapter extends BaseAdapter {
             holder.avatar.setImageResource(R.drawable.ic_project);
         }
 
-        if (!message.getPhoto().getUrl().isEmpty()) {
+        if (message.getPhoto() != null) {
             // MESSAGE PHOTO
             imageLoader.displayImage(message.getPhoto().getUrl(), holder.image);
         } else {

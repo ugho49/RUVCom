@@ -29,7 +29,13 @@ public class Message extends BaseBean {
                 this.idUserSender = data.getInt("idUserSender");
                 this.idUserReceiver = data.getInt("idUserReceiver");
                 this.message = data.getString("message");
-                this.photo = new Photo(data.getJSONObject("photo"));
+
+                if(!data.isNull("photo")) {
+                    this.photo = new Photo(data.getJSONObject("photo"));
+                } else {
+                    this.photo = null;
+                }
+
                 this.isRead = data.getBoolean("isRead");
 
                 Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(data.getString("dateTime"));
