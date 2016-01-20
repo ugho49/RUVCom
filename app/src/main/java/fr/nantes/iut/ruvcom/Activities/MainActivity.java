@@ -254,7 +254,10 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Toast.makeText(getApplicationContext(), String.valueOf("Sender : " + user.getId() + " / Receiver : " + adapter.getItemId(position)), Toast.LENGTH_SHORT).show();
+        Intent conversationIntent = new Intent(getBaseContext(), ConversationActivity.class);
+        conversationIntent.putExtra("user", user);
+        conversationIntent.putExtra("distantUser", adapter.getItem(position).getUser());
+        startActivity(conversationIntent);
     }
 
     private class getConvTask extends AsyncTask<Void, Void, List<Conversation>> {
