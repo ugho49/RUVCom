@@ -97,8 +97,6 @@ public class MainActivity extends AppCompatActivity
         navEmail = (TextView) navigationHeaderView.findViewById(R.id.nav_email);
         navBackground = (ImageView) navigationHeaderView.findViewById(R.id.nav_background);
 
-        //navEmail.setText("test");
-
         setSupportActionBar(toolbar);
 
         fab.setOnClickListener(new View.OnClickListener() {
@@ -179,9 +177,9 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        /*if (id == R.id.action_settings) {
             return true;
-        }
+        }*/
 
         return super.onOptionsItemSelected(item);
     }
@@ -194,6 +192,8 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.signout) {
             signOut();
+        } else if (id == R.id.action_settings) {
+            Toast.makeText(getApplicationContext(), "Click sur settings", Toast.LENGTH_SHORT).show();
         }
 
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

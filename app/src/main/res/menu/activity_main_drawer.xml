@@ -3,6 +3,10 @@
 
     <group android:checkableBehavior="single">
         <item
+            android:id="@+id/action_settings"
+            android:icon="@drawable/ic_setting_light"
+            android:title="@string/action_settings" />
+        <item
             android:id="@+id/signout"
             android:icon="@drawable/ic_power_settings_new_black_24dp"
             android:title="@string/btn_logout" />
@@ -24,19 +28,6 @@
             android:id="@+id/nav_manage"
             android:icon="@drawable/ic_menu_manage"
             android:title="Tools" />
-    </group>
-
-    <item android:title="Communicate">
-        <menu>
-            <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
-            <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
-        </menu>
-    </item>-->
+    </group>-->
 
 </menu>
