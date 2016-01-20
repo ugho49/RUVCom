@@ -2,13 +2,17 @@ package fr.nantes.iut.ruvcom.Activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
@@ -31,6 +35,7 @@ import java.util.ArrayList;
 import fr.nantes.iut.ruvcom.Bean.User;
 import fr.nantes.iut.ruvcom.R;
 import fr.nantes.iut.ruvcom.Utils.Config;
+import fr.nantes.iut.ruvcom.Utils.ConnectionDetector;
 import fr.nantes.iut.ruvcom.Utils.Requestor;
 
 /**
@@ -47,12 +52,14 @@ public class SignInActivity extends AppCompatActivity implements
     private GoogleApiClient mGoogleApiClient;
     private GoogleSignInAccount mGoogleSignInAccount;
 
+    private CoordinatorLayout layoutForSnack;
     private ProgressDialog mProgressDialog;
     private SignInButton signInButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_signin);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -62,6 +69,7 @@ public class SignInActivity extends AppCompatActivity implements
 
         // Views
         signInButton = (SignInButton) findViewById(R.id.sign_in_button);
+        layoutForSnack = (CoordinatorLayout) findViewById(R.id.layoutForSnack);
 
         // Button listeners
         signInButton.setOnClickListener(this);
@@ -151,6 +159,10 @@ public class SignInActivity extends AppCompatActivity implements
             new LoginTask(user).execute();
         } else {
             setSigninButtonHidden(false);
+
+            if (!ConnectionDetector.isConnectingToInternet(getApplicationContext())) {
+                showSnackError("Aucune connexion internet !");
+            }
         }
     }
 
@@ -195,6 +207,26 @@ public class SignInActivity extends AppCompatActivity implements
                 signIn();
                 break;
         }
+    }
+
+    private void showSnackError(String message) {
+        Snackbar snackbar = Snackbar
+                .make(layoutForSnack, message, Snackbar.LENGTH_LONG)
+                .setAction("Réessayer", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        signIn();
+                    }
+                });
+
+        // Changing message text color
+        snackbar.setActionTextColor(Color.RED);
+
+        // Changing action button text color
+        View sbView = snackbar.getView();
+        TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+        textView.setTextColor(Color.YELLOW);
+        snackbar.show();
     }
 
     private class LoginTask extends AsyncTask<Void, Void, User> {
@@ -279,9 +311,10 @@ public class SignInActivity extends AppCompatActivity implements
             hideProgressDialog();
 
             if (result == null) {
-                Toast.makeText(getApplicationContext(), "Erreur d'authentification", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), "Erreur d'authentification", Toast.LENGTH_SHORT).show();
+                showSnackError("Erreur d'authentification");
             } else {
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                Intent intent = new Intent(getBaseContext(), MainActivity.class);
                 intent.putExtra("user", result);
                 startActivity(intent);
             }
