@@ -35,6 +35,7 @@ public class ConversationActivity extends AppCompatActivity
     private User distantUser;
 
     private ImageButton sendButton;
+    private ImageButton cameraButton;
     private EditText editTextMessage;
     private Toolbar toolbar;
 
@@ -54,11 +55,13 @@ public class ConversationActivity extends AppCompatActivity
         distantUser = (User) getIntent().getSerializableExtra("distantUser");
 
         sendButton = (ImageButton) findViewById(R.id.sendButton);
+        cameraButton = (ImageButton) findViewById(R.id.cameraButton);
         editTextMessage = (EditText) findViewById(R.id.message);
         messageListView = (ListView) findViewById(R.id.listViewMessages);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
 
         sendButton.setOnClickListener(this);
+        cameraButton.setOnClickListener(this);
 
         toolbar.setTitle(distantUser.getDisplayName());
         setSupportActionBar(toolbar);
@@ -91,6 +94,9 @@ public class ConversationActivity extends AppCompatActivity
                 if(!"".equals(editTextMessage.getText().toString())) {
                     new sendMessageTask(editTextMessage.getText().toString()).execute();
                 }
+                break;
+            case R.id.cameraButton:
+                Toast.makeText(getBaseContext(), "Send picture ....", Toast.LENGTH_SHORT).show();
                 break;
         }
     }
