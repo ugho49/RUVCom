@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -14,13 +15,13 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import fr.nantes.iut.ruvcom.Bean.Message;
@@ -131,16 +132,9 @@ public class UploadActivity extends AppCompatActivity {
                         });
 
                 final File sourceFile = new File(filePath);
-                /*final String name = sourceFile.getName();
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                Bitmap bm = BitmapFactory.decodeFile(filePath);
-                bm.compress(Bitmap.CompressFormat.JPEG, 90, baos);*/
-
-                FileBody fileBody = new FileBody(sourceFile);
 
                 // Adding file data to http body
-                entity.addPart("image", fileBody);
-                //entity.addPart("image", new ByteArrayBody(baos.toByteArray(), name));
+                entity.addPart("image", new FileBody(sourceFile));
                 totalSize = entity.getContentLength();
                 entity.addPart("token", new StringBody(Config.SECRET_TOKEN));
 
@@ -164,6 +158,19 @@ public class UploadActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Message result) {
+            try {
+                File file = new File(filePath);
+                file.delete();
+                if(file.getParentFile().isDirectory()) {
+                    File directory = file.getParentFile();
+
+                    if(directory.listFiles().length == 0) {
+                        directory.delete();
+                    }
+                }
+            } catch (Exception e) {
+                Log.e("tag", e.getMessage());
+            }
 
             if(result == null) {
                 // finish error
