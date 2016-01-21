@@ -83,4 +83,16 @@ public class User extends BaseBean {
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
+
+    @Override
+    public String toString() {
+        return "{"+
+                    "id:" + id + "," +
+                    "googleId:" + googleId + "," +
+                    "displayName:" + displayName + "," +
+                    "email:" + email + "," +
+                    "imageUrl:" + imageUrl + "," +
+                    "coverImageUrl:" + coverImageUrl +
+                "}";
+    }
 }

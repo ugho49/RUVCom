@@ -30,4 +30,6 @@ public class Config {
     public static final String API_MESSAGE_POST = BASE_API_URL + "createMessage/%s/%s";
     // PARAM : idSender, idReceiver
     public static final String API_UPLOAD_PICTURE = BASE_API_URL + "uploadPicture/%s/%s";
+    // PARAM : idUser, idDistantUser
+    public static final String API_UPDATE_MESSAGE_READ = BASE_API_URL + "setMessageRead/%s/%s";
 }

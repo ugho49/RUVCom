@@ -154,6 +154,14 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
+        // Nothing
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        new getConvTask().execute();
     }
 
     @Override
@@ -381,7 +389,26 @@ public class MainActivity extends AppCompatActivity
         // onPostExecute displays the results of the AsyncTask.
         @Override
         protected void onPostExecute(List<Conversation> result) {
-            loadListView(result);
+            boolean bool_update_view = false;
+
+            if(convListView.getCount() != 0) {
+                for (int i = 0; i < result.size(); i++) {
+                    String convListViewString = convListView.getAdapter().getItem(i).toString();
+                    String resultString = result.get(i).toString();
+
+                    if (!convListViewString.equals(resultString)) {
+                        bool_update_view = true;
+                        break;
+                    }
+                }
+            } else {
+                bool_update_view = true;
+            }
+
+            if(bool_update_view) {
+                loadListView(result);
+            }
+
             hideProgressDialog();
         }
     }

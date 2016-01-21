@@ -349,6 +349,17 @@ public class ConversationActivity extends AppCompatActivity
             //List<Message> result = new ArrayList<>();
 
             try{
+                // UPDATE MESSAGES READ
+                String URL_UPDATE_MESSAGE_READ = String.format(Config.API_UPDATE_MESSAGE_READ, String.valueOf(user.getId()), String.valueOf(distantUser.getId()));
+
+                ArrayList<NameValuePair> params = new ArrayList<>();
+                params.add(new BasicNameValuePair("token", Config.SECRET_TOKEN));
+
+                new Requestor(URL_UPDATE_MESSAGE_READ).post(params);
+
+                // END UPDATE
+
+
                 String URL = String.format(Config.API_MESSAGES_GET, String.valueOf(user.getId()), String.valueOf(distantUser.getId()));
 
                 JSONObject json = new Requestor(URL).get();

@@ -60,4 +60,13 @@ public class Conversation extends BaseBean {
     public void setLastDateMessage(Date lastDateMessage) {
         this.lastDateMessage = lastDateMessage;
     }
+
+    @Override
+    public String toString() {
+        return "{"+
+                    "user:" + user.toString() + "," +
+                    "notification:" + notification + "," +
+                    "lastDateMessage" + lastDateMessage +
+                "}";
+    }
 }
