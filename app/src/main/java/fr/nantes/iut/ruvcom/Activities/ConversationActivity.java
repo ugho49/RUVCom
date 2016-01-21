@@ -1,4 +1,4 @@
-package fr.nantes.iut.ruvcom.Activities;
+package fr.nantes.iut.ruvcom.activities;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -30,13 +30,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import fr.nantes.iut.ruvcom.Adapter.ListViewMessagesAdapter;
-import fr.nantes.iut.ruvcom.Bean.Conversation;
-import fr.nantes.iut.ruvcom.Bean.Message;
-import fr.nantes.iut.ruvcom.Bean.User;
+import fr.nantes.iut.ruvcom.adapter.ListViewMessagesAdapter;
+import fr.nantes.iut.ruvcom.bean.Message;
+import fr.nantes.iut.ruvcom.bean.User;
 import fr.nantes.iut.ruvcom.R;
-import fr.nantes.iut.ruvcom.Utils.Config;
-import fr.nantes.iut.ruvcom.Utils.Requestor;
+import fr.nantes.iut.ruvcom.utils.Config;
+import fr.nantes.iut.ruvcom.utils.Requestor;
 
 public class ConversationActivity extends AppCompatActivity
         implements View.OnClickListener {

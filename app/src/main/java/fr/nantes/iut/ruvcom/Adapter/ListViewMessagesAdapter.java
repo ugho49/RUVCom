@@ -1,4 +1,4 @@
-package fr.nantes.iut.ruvcom.Adapter;
+package fr.nantes.iut.ruvcom.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -13,8 +13,8 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.List;
 
-import fr.nantes.iut.ruvcom.Bean.Message;
-import fr.nantes.iut.ruvcom.Bean.User;
+import fr.nantes.iut.ruvcom.bean.Message;
+import fr.nantes.iut.ruvcom.bean.User;
 import fr.nantes.iut.ruvcom.R;
 
 /**

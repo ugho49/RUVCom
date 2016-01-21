@@ -1,4 +1,4 @@
-package fr.nantes.iut.ruvcom.Activities;
+package fr.nantes.iut.ruvcom.activities;
 
 import android.app.FragmentManager;
 import android.app.ProgressDialog;
@@ -14,7 +14,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -33,11 +32,11 @@ import org.json.JSONObject;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
-import fr.nantes.iut.ruvcom.Bean.User;
+import fr.nantes.iut.ruvcom.bean.User;
 import fr.nantes.iut.ruvcom.R;
-import fr.nantes.iut.ruvcom.Utils.Config;
-import fr.nantes.iut.ruvcom.Utils.ConnectionDetector;
-import fr.nantes.iut.ruvcom.Utils.Requestor;
+import fr.nantes.iut.ruvcom.utils.Config;
+import fr.nantes.iut.ruvcom.utils.ConnectionDetector;
+import fr.nantes.iut.ruvcom.utils.Requestor;
 
 /**
  * Activity to demonstrate basic retrieval of the Google user's ID, email address, and basic

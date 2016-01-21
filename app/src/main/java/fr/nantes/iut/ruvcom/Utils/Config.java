@@ -1,4 +1,4 @@
-package fr.nantes.iut.ruvcom.Utils;
+package fr.nantes.iut.ruvcom.utils;
 
 /**
  * Created by ughostephan on 18/01/2016.

@@ -1,4 +1,4 @@
-package fr.nantes.iut.ruvcom.Adapter;
+package fr.nantes.iut.ruvcom.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -14,7 +14,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-import fr.nantes.iut.ruvcom.Bean.Conversation;
+import fr.nantes.iut.ruvcom.bean.Conversation;
 import fr.nantes.iut.ruvcom.R;
 
 /**

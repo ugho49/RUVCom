@@ -1,4 +1,4 @@
-package fr.nantes.iut.ruvcom.Services;
+package fr.nantes.iut.ruvcom.services;
 
 import android.app.IntentService;
 import android.content.Intent;
@@ -8,6 +8,10 @@ import android.content.Intent;
  * Created by ughostephan on 18/01/2016.
  */
 public class GCMIntentService extends IntentService {
+
+    public GCMIntentService() {
+        super("");
+    }
 
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.
