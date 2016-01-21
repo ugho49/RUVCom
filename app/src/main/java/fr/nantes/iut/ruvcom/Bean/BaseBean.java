@@ -1,4 +1,4 @@
-package fr.nantes.iut.ruvcom.Bean;
+package fr.nantes.iut.ruvcom.bean;
 
 import java.io.Serializable;
 

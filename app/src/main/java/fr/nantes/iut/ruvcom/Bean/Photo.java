@@ -1,11 +1,9 @@
-package fr.nantes.iut.ruvcom.Bean;
+package fr.nantes.iut.ruvcom.bean;
 
 import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.text.ParseException;
 
 /**
  * Created by ughostephan on 19/01/2016.

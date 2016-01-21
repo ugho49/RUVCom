@@ -1,9 +1,6 @@
-package fr.nantes.iut.ruvcom.Dialogs;
+package fr.nantes.iut.ruvcom.dialogs;
 
 import android.app.Activity;
-import android.app.Dialog;
-import android.app.DialogFragment;
-import android.os.Bundle;
 
 /**
  * Created by ughostephan on 20/01/2016.

@@ -1,22 +1,18 @@
-package fr.nantes.iut.ruvcom.Adapter;
+package fr.nantes.iut.ruvcom.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.github.siyamed.shapeimageview.BubbleImageView;
 import com.github.siyamed.shapeimageview.CircularImageView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
-import java.text.SimpleDateFormat;
 import java.util.List;
 
-import fr.nantes.iut.ruvcom.Bean.Conversation;
-import fr.nantes.iut.ruvcom.Bean.User;
+import fr.nantes.iut.ruvcom.bean.User;
 import fr.nantes.iut.ruvcom.R;
 
 /**
