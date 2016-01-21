@@ -16,6 +16,8 @@ public class Config {
     public static final String API_USER_EXIST = BASE_API_URL + "userExists/%s";
     // PARAM : NULL
     public static final String API_USER_GET_ALL = BASE_API_URL + "getUsers";
+    // PARAM : idUser
+    public static final String API_USER_GET_ALL_EXCEPT_ME = BASE_API_URL + "getUsers/%s";
     // PARAM : googleID, displayName, email
     public static final String API_USER_CREATE = BASE_API_URL + "createUser/%s/%s/%s";
     // PARAM : id, googleID, displayName, email

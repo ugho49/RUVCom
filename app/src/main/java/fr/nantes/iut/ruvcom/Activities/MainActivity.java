@@ -39,6 +39,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.nantes.iut.ruvcom.Adapter.DialogListUserAdapter;
 import fr.nantes.iut.ruvcom.Adapter.ListViewConversationAdapter;
 import fr.nantes.iut.ruvcom.Bean.Conversation;
 import fr.nantes.iut.ruvcom.Bean.User;
@@ -101,8 +102,8 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                showListUser();
+                //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
             }
         });
 
@@ -228,6 +229,83 @@ public class MainActivity extends AppCompatActivity
             }
         });
         AlertDialog alert = signOutConfirmation.create();
+        alert.show();
+    }
+
+    private void showListUser() {
+        new AsyncTask<Void, Void, List<User>> () {
+
+            @Override
+            protected void onPreExecute() {
+                showProgressDialog();
+            }
+
+            @Override
+            protected List<User> doInBackground(Void... u) {
+                List<User> result = new ArrayList<>();
+
+                try{
+                    String URL = String.format(Config.API_USER_GET_ALL_EXCEPT_ME, String.valueOf(user.getId()));
+                    JSONObject json = new Requestor(URL).get();
+                    JSONArray userArray = null;
+                    if (json != null) {
+                        if (!json.isNull("data")) {
+                            userArray = json.getJSONArray("data");
+                        }
+                    }
+
+                    if (userArray != null) {
+                        for(int i = 0 ; i < userArray.length(); i++){
+                            JSONObject userObj = userArray.getJSONObject(i);
+
+                            if (userObj != null) {
+                                result.add(new User(userObj));
+                            }
+                        }
+                    }
+                }
+                catch(Exception ex) {
+                    Log.d(TAG, "Fail : " + ex.getMessage());
+                }
+
+                return result;
+            }
+
+            @Override
+            protected void onPostExecute(List<User> result) {
+                hideProgressDialog();
+
+                if (result == null) {
+                    Toast.makeText(getApplicationContext(), "Aucun utilisateur...", Toast.LENGTH_SHORT).show();
+                } else {
+                    DialogListUserAdapter adapter = new DialogListUserAdapter(getApplicationContext(), result);
+                    afficherDialogListUser(adapter);
+                }
+            }
+        }.execute();
+    }
+
+    private void afficherDialogListUser(final DialogListUserAdapter adapter) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle("Choisir un utilisateur");
+        builder.setCancelable(false);
+        builder.setNegativeButton(getResources().getText(R.string.cancel), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int position) {
+                dialog.dismiss();
+            }
+        });
+        builder.setAdapter(adapter,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int position) {
+                        User u = adapter.getItem(position);
+                        Toast.makeText(getApplicationContext(), "Click sur utilisateur - id  : " + u.getId() + ", name : " + u.getDisplayName(), Toast.LENGTH_SHORT).show();
+                        //dialog.dismiss();
+                    }
+                });
+        AlertDialog alert = builder.create();
         alert.show();
     }
 
