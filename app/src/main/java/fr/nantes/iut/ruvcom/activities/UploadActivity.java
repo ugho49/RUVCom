@@ -137,7 +137,7 @@ public class UploadActivity extends AppCompatActivity {
                 entity.addPart("token", new StringBody(Config.SECRET_TOKEN));
 
                 JSONObject response = new Requestor(URL).post(entity);
-                
+
                 if(response != null) {
                     if (!response.isNull("data")) {
                         result = new Message(response.getJSONObject("data"));
@@ -157,6 +157,7 @@ public class UploadActivity extends AppCompatActivity {
         protected void onPostExecute(Message result) {
             try {
                 File file = new File(filePath);
+
                 file.delete();
                 if(file.getParentFile().isDirectory()) {
                     File directory = file.getParentFile();
