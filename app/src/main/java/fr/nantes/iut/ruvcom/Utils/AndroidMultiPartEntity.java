@@ -1,6 +1,5 @@
 package fr.nantes.iut.ruvcom.Utils;
 
-import org.apache.http.NameValuePair;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
 

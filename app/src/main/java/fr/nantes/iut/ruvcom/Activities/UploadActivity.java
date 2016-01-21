@@ -5,37 +5,26 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.ContactsContract;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.VideoView;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.InputStreamEntity;
+import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import fr.nantes.iut.ruvcom.Bean.Message;
 import fr.nantes.iut.ruvcom.Bean.User;
@@ -144,10 +133,17 @@ public class UploadActivity extends AppCompatActivity {
                             }
                         });
 
-                File sourceFile = new File(filePath);
+                final File sourceFile = new File(filePath);
+                final String name = sourceFile.getName();
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                Bitmap bm = BitmapFactory.decodeFile(filePath);
+                bm.compress(Bitmap.CompressFormat.JPEG, 90, baos);
+
+                //FileBody fileBody = new FileBody(sourceFile, "image/jpeg");
 
                 // Adding file data to http body
-                entity.addPart("image", new FileBody(sourceFile));
+                //entity.addPart("image", fileBody);
+                entity.addPart("image", new ByteArrayBody(baos.toByteArray(), name));
                 totalSize = entity.getContentLength();
                 entity.addPart("token", new StringBody(Config.SECRET_TOKEN));
 
