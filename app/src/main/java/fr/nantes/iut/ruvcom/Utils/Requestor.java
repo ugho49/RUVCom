@@ -52,6 +52,26 @@ public class Requestor {
         return response;
     }
 
+    public JSONObject post(AndroidMultiPartEntity entity) {
+
+        HttpPost httppost = new HttpPost(URL);
+        JSONObject response = null;
+
+        try {
+            if (entity != null) {
+                httppost.setEntity(entity);
+            }
+
+            response = returnResponse(httpclient.execute(httppost));
+        } catch (UnsupportedEncodingException e) {
+            Log.e("Requestor_HTTPPOST", e.getMessage());
+        } catch (IOException e) {
+            Log.e("Requestor_HTTPPOST", e.getMessage());
+        }
+
+        return response;
+    }
+
     public JSONObject get() {
         HttpGet httpget = new HttpGet(URL);
 

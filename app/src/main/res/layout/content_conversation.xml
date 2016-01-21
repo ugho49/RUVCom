@@ -14,6 +14,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/listViewMessages"
+        android:stackFromBottom="true"
+        android:transcriptMode="alwaysScroll"
         android:layout_weight="29"/>
 
     <LinearLayout
@@ -48,7 +50,7 @@
             android:id="@+id/sendButton"
             android:src="@drawable/ic_send_black_24dp"
             android:scaleType="fitCenter"
-        android:background="@null"
+            android:background="@null"
             android:layout_weight="6" />
     </LinearLayout>
 </LinearLayout>

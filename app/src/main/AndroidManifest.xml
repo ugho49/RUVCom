@@ -44,12 +44,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".Activities.ConversationActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar"></activity>
 
         <receiver
             android:name="com.google.android.gms.gcm.GcmReceiver"
@@ -66,6 +64,11 @@
         </receiver>
 
         <service android:name=".Services.GCMIntentService" />
+
+        <activity
+            android:name=".Activities.UploadActivity"
+            android:label="@string/title_activity_upload"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

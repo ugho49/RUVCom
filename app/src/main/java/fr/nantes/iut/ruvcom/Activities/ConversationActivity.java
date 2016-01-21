@@ -1,7 +1,12 @@
 package fr.nantes.iut.ruvcom.Activities;
 
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -18,10 +23,15 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import fr.nantes.iut.ruvcom.Adapter.ListViewMessagesAdapter;
+import fr.nantes.iut.ruvcom.Bean.Conversation;
 import fr.nantes.iut.ruvcom.Bean.Message;
 import fr.nantes.iut.ruvcom.Bean.User;
 import fr.nantes.iut.ruvcom.R;
@@ -31,18 +41,30 @@ import fr.nantes.iut.ruvcom.Utils.Requestor;
 public class ConversationActivity extends AppCompatActivity
         implements View.OnClickListener {
 
+    // Camera activity request codes
+    private static final int CAMERA_CAPTURE_IMAGE_REQUEST_CODE = 100;
+    //private static final int CAMERA_CAPTURE_VIDEO_REQUEST_CODE = 200;
+    private static final int UPLOAD_ACTIVITY_REQUEST_CODE = 300;
+
+    public static final int MEDIA_TYPE_IMAGE = 1;
+    //public static final int MEDIA_TYPE_VIDEO = 2;
+
+    private static final String TAG = "ConversationActivity";
+
     private User user;
     private User distantUser;
 
     private ImageButton sendButton;
-    private ImageButton cameraButton;
+    private ImageButton btnCapturePicture;
     private EditText editTextMessage;
     private Toolbar toolbar;
 
     private ListViewMessagesAdapter adapter;
     private ListView messageListView;
 
-    private List<Message> messages = new ArrayList<>();
+    private Uri fileUri; // file url to store image/video
+
+    private static List<Message> messages = new ArrayList<>();
 
 
     @Override
@@ -55,17 +77,24 @@ public class ConversationActivity extends AppCompatActivity
         distantUser = (User) getIntent().getSerializableExtra("distantUser");
 
         sendButton = (ImageButton) findViewById(R.id.sendButton);
-        cameraButton = (ImageButton) findViewById(R.id.cameraButton);
+        btnCapturePicture = (ImageButton) findViewById(R.id.cameraButton);
         editTextMessage = (EditText) findViewById(R.id.message);
         messageListView = (ListView) findViewById(R.id.listViewMessages);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
 
         sendButton.setOnClickListener(this);
-        cameraButton.setOnClickListener(this);
+        editTextMessage.setHint("Message à " + distantUser.getDisplayName());
 
         toolbar.setTitle(distantUser.getDisplayName());
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        // Checking camera availability
+        if (!isDeviceSupportCamera()) {
+            btnCapturePicture.setVisibility(View.GONE);
+        } else {
+            btnCapturePicture.setOnClickListener(this);
+        }
 
         new getMessagesTask().execute();
     }
@@ -96,13 +125,146 @@ public class ConversationActivity extends AppCompatActivity
                 }
                 break;
             case R.id.cameraButton:
-                Toast.makeText(getBaseContext(), "Send picture ....", Toast.LENGTH_SHORT).show();
+                captureImage();
                 break;
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // if the result is capturing Image
+        if (requestCode == CAMERA_CAPTURE_IMAGE_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+
+                Intent uploadIntent = new Intent(ConversationActivity.this, UploadActivity.class);
+                uploadIntent.putExtra("filePath", fileUri.getPath());
+                uploadIntent.putExtra("user", user);
+                uploadIntent.putExtra("distantUser", distantUser);
+                startActivityForResult(uploadIntent, UPLOAD_ACTIVITY_REQUEST_CODE);
+
+                overridePendingTransition(R.anim.in_right_to_left, R.anim.out_right_to_left);
+
+            } else if (resultCode == RESULT_CANCELED) {
+
+                // user cancelled Image capture
+                Toast.makeText(getApplicationContext(),
+                        "User cancelled image capture", Toast.LENGTH_SHORT)
+                        .show();
+
+            } else {
+                // failed to capture image
+                Toast.makeText(getApplicationContext(),
+                        "Sorry! Failed to capture image", Toast.LENGTH_SHORT)
+                        .show();
+            }
+        } else if (requestCode == UPLOAD_ACTIVITY_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+
+                Message result = (Message) data.getSerializableExtra("message");
+                messages.add(result);
+                loadListView();
+
+            } else {
+                // failed to capture image
+                Toast.makeText(getApplicationContext(), "Upload Failed !", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    /**
+     * Here we store the file url as it will be null after returning from camera
+     * app
+     */
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        // save file url in bundle as it will be null on screen orientation
+        // changes
+        outState.putParcelable("file_uri", fileUri);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        // get the file url
+        fileUri = savedInstanceState.getParcelable("file_uri");
+    }
+
+    /**
+     * Creating file uri to store image/video
+     */
+    public Uri getOutputMediaFileUri(int type) {
+        return Uri.fromFile(getOutputMediaFile(type));
+    }
+
+    /**
+     * returning image / video
+     */
+    private static File getOutputMediaFile(int type) {
+
+        // External sdcard location
+        File mediaStorageDir = new File(
+                Environment
+                        .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+                Config.LOCAL_IMAGE_DIRECTORY_NAME);
+
+        // Create the storage directory if it does not exist
+        if (!mediaStorageDir.exists()) {
+            if (!mediaStorageDir.mkdirs()) {
+                Log.d(TAG, "Oops! Failed create "
+                        + Config.LOCAL_IMAGE_DIRECTORY_NAME + " directory");
+                return null;
+            }
+        }
+
+        // Create a media file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss",
+                Locale.getDefault()).format(new Date());
+        File mediaFile;
+        if (type == MEDIA_TYPE_IMAGE) {
+            mediaFile = new File(mediaStorageDir.getPath() + File.separator
+                    + "IMG_" + timeStamp + ".jpg");
+        } else {
+            return null;
+        }
+
+        return mediaFile;
+    }
+
+    /**
+     * Checking device has camera hardware or not
+     * */
+    private boolean isDeviceSupportCamera() {
+        if (getApplicationContext().getPackageManager().hasSystemFeature(
+                PackageManager.FEATURE_CAMERA)) {
+            // this device has a camera
+            return true;
+        } else {
+            // no camera on this device
+            return false;
+        }
+    }
+
+    /**
+     * Launching camera app to capture image
+     */
+    private void captureImage() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+        fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
+
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
+
+        // start the image capture Intent
+        startActivityForResult(intent, CAMERA_CAPTURE_IMAGE_REQUEST_CODE);
+    }
+
+
     private void goBottomListView() {
-        messageListView.setSelection(messageListView.getCount() - 1);
+        //messageListView.setSelection(messageListView.getCount() - 1);
+        messageListView.smoothScrollToPosition(0, messageListView.getHeight());
     }
 
     private void loadListView() {

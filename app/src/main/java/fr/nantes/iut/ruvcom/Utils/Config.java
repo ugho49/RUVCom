@@ -4,17 +4,10 @@ package fr.nantes.iut.ruvcom.Utils;
  * Created by ughostephan on 18/01/2016.
  */
 public class Config {
-
-    // HELPER
-    /*String fs = String.format("The value of the float " +
-            "variable is %f, while " +
-            "the value of the " +
-            "integer variable is %d, " +
-            " and the string is %s",
-            6.89, 8768, "String var");*/
-
     // Secret token pour l'api
     public static final String SECRET_TOKEN = "Ok2CCaEaHngyNPMqPRcE5MkvzIAwpnrJc5zECIO9fAW9dnxI1zppPvRKu7pnU8tbeFrjjke5m8wDacadWWWOFgiLcr1xvdxhUVMA1WWTJkLiFFmFAAGwS";
+    // Directory name to store captured images and videos
+    public static final String LOCAL_IMAGE_DIRECTORY_NAME = "RUVComFileUpload";
     // API KEY
     public static final String API_KEY = "AIzaSyCoFVlSOijLQC1HlQswRQ3-YI8EkeODTZQ";
     // Url de base de L'API
@@ -33,5 +26,6 @@ public class Config {
     public static final String API_MESSAGES_GET = BASE_API_URL + "getMessages/%s/%s";
     // PARAM : idSender, idReceiver
     public static final String API_MESSAGE_POST = BASE_API_URL + "createMessage/%s/%s";
-
+    // PARAM : idSender, idReceiver
+    public static final String API_UPLOAD_PICTURE = BASE_API_URL + "uploadPicture/%s/%s";
 }
