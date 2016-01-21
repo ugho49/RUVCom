@@ -1,4 +1,4 @@
-package fr.nantes.iut.ruvcom.activities;
+package fr.nantes.iut.ruvcom.Activities;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -38,13 +38,13 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.nantes.iut.ruvcom.adapter.DialogListUserAdapter;
-import fr.nantes.iut.ruvcom.adapter.ListViewConversationAdapter;
-import fr.nantes.iut.ruvcom.bean.Conversation;
-import fr.nantes.iut.ruvcom.bean.User;
+import fr.nantes.iut.ruvcom.Adapter.DialogListUserAdapter;
+import fr.nantes.iut.ruvcom.Adapter.ListViewConversationAdapter;
+import fr.nantes.iut.ruvcom.Bean.Conversation;
+import fr.nantes.iut.ruvcom.Bean.User;
 import fr.nantes.iut.ruvcom.R;
-import fr.nantes.iut.ruvcom.utils.Config;
-import fr.nantes.iut.ruvcom.utils.Requestor;
+import fr.nantes.iut.ruvcom.Utils.Config;
+import fr.nantes.iut.ruvcom.Utils.Requestor;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,

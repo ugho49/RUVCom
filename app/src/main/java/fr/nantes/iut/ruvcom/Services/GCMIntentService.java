@@ -1,4 +1,4 @@
-package fr.nantes.iut.ruvcom.services;
+package fr.nantes.iut.ruvcom.Services;
 
 import android.app.IntentService;
 import android.content.Intent;

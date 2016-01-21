@@ -1,6 +1,7 @@
-package fr.nantes.iut.ruvcom.adapter;
+package fr.nantes.iut.ruvcom.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,8 +14,9 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.List;
 
-import fr.nantes.iut.ruvcom.bean.Message;
-import fr.nantes.iut.ruvcom.bean.User;
+import fr.nantes.iut.ruvcom.Activities.FullScreenImageActivity;
+import fr.nantes.iut.ruvcom.Bean.Message;
+import fr.nantes.iut.ruvcom.Bean.User;
 import fr.nantes.iut.ruvcom.R;
 
 /**
@@ -26,6 +28,7 @@ public class ListViewMessagesAdapter extends BaseAdapter {
     private final Context _c;
     private User user;
     private User distantUser;
+    private String url_image = "";
 
     private final ImageLoader imageLoader = ImageLoader.getInstance();
 
@@ -65,7 +68,7 @@ public class ListViewMessagesAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder = null;
         View v = null;
-        Message message = getItem(position);
+        final Message message = getItem(position);
 
         LayoutInflater vi = (LayoutInflater) _c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         holder = new ViewHolder();
@@ -101,7 +104,7 @@ public class ListViewMessagesAdapter extends BaseAdapter {
         v.setTag(holder);
 
 
-        String url_image = "";
+        url_image = "";
 
         if (message.getIdUserSender() == user.getId()) {
             // USER
@@ -120,6 +123,19 @@ public class ListViewMessagesAdapter extends BaseAdapter {
         if (message.getPhoto() != null) {
             // MESSAGE PHOTO
             imageLoader.displayImage(message.getPhoto().getUrl(), holder.image);
+            holder.image.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent fullScreenImageIntent = new Intent(_c, FullScreenImageActivity.class);
+                    fullScreenImageIntent.putExtra("imageUrl", message.getPhoto().getUrl());
+                    fullScreenImageIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    _c.startActivity(fullScreenImageIntent);
+
+                   /* Activity activity = (Activity) _c;
+                    activity.startActivity(fullScreenImageIntent);
+                    activity.overridePendingTransition(R.anim.in_right_to_left, R.anim.out_right_to_left);*/
+                }
+            });
         } else {
             // MESSAGE TEXT
             holder.message.setText(message.getMessage());

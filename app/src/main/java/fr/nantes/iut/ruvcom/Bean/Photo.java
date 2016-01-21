@@ -1,4 +1,4 @@
-package fr.nantes.iut.ruvcom.bean;
+package fr.nantes.iut.ruvcom.Bean;
 
 import android.util.Log;
 
