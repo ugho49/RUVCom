@@ -79,7 +79,7 @@ public class ListViewMessagesAdapter extends BaseAdapter {
                 holder.image = (ImageView) v.findViewById(R.id.item_message_photo_right_image);
             } else {
                 // MESSAGE PHOTO FROM DISTANT USER
-                v = vi.inflate(R.layout.item_message_photo_right, null);
+                v = vi.inflate(R.layout.item_message_photo_left, null);
                 holder.avatar = (BubbleImageView) v.findViewById(R.id.item_message_photo_left_avatar);
                 holder.image = (ImageView) v.findViewById(R.id.item_message_photo_left_image);
             }
