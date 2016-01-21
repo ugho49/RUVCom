@@ -11,7 +11,7 @@ public class Config {
     // GOOGLE API KEY
     public static final String API_KEY = "AIzaSyCoFVlSOijLQC1HlQswRQ3-YI8EkeODTZQ";
     // SENDER ID
-    public static final String SENDER_ID = "ruvcom-1194";
+    public static final String SENDER_ID = "658363483971";
     // Url de base de L'API
     public static final String BASE_API_URL = "http://dev.ugho-stephan.fr/api/";
     // PARAM : googleID
