@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -21,12 +20,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import fr.nantes.iut.ruvcom.R;
 import fr.nantes.iut.ruvcom.bean.Message;
 import fr.nantes.iut.ruvcom.bean.User;
-import fr.nantes.iut.ruvcom.R;
 import fr.nantes.iut.ruvcom.utils.AndroidMultiPartEntity;
 import fr.nantes.iut.ruvcom.utils.Config;
 import fr.nantes.iut.ruvcom.utils.Requestor;
@@ -139,8 +137,7 @@ public class UploadActivity extends AppCompatActivity {
                 entity.addPart("token", new StringBody(Config.SECRET_TOKEN));
 
                 JSONObject response = new Requestor(URL).post(entity);
-
-
+                
                 if(response != null) {
                     if (!response.isNull("data")) {
                         result = new Message(response.getJSONObject("data"));
