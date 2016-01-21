@@ -1,4 +1,4 @@
-package fr.nantes.iut.ruvcom.dialogs;
+package fr.nantes.iut.ruvcom.Dialogs;
 
 import android.app.Activity;
 

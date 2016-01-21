@@ -1,25 +1,33 @@
-package fr.nantes.iut.ruvcom.activities;
+package fr.nantes.iut.ruvcom.Activities;
 
 import android.app.FragmentManager;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
@@ -32,11 +40,13 @@ import org.json.JSONObject;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
-import fr.nantes.iut.ruvcom.bean.User;
+import fr.nantes.iut.ruvcom.Bean.User;
 import fr.nantes.iut.ruvcom.R;
-import fr.nantes.iut.ruvcom.utils.Config;
-import fr.nantes.iut.ruvcom.utils.ConnectionDetector;
-import fr.nantes.iut.ruvcom.utils.Requestor;
+import fr.nantes.iut.ruvcom.gcm.RegistrationIntentService;
+import fr.nantes.iut.ruvcom.Utils.Config;
+import fr.nantes.iut.ruvcom.Utils.ConnectionDetector;
+import fr.nantes.iut.ruvcom.Utils.NamedPreferences;
+import fr.nantes.iut.ruvcom.Utils.Requestor;
 
 /**
  * Activity to demonstrate basic retrieval of the Google user's ID, email address, and basic
@@ -47,10 +57,14 @@ public class SignInActivity extends AppCompatActivity implements
         View.OnClickListener {
 
     private static final String TAG = "SignInActivity";
+
+    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private static final int RC_SIGN_IN = 9001;
 
     private GoogleApiClient mGoogleApiClient;
     private GoogleSignInAccount mGoogleSignInAccount;
+
+    private BroadcastReceiver mRegistrationBroadcastReceiver;
 
     private CoordinatorLayout layoutForSnack;
     private ProgressDialog mProgressDialog;
@@ -75,6 +89,21 @@ public class SignInActivity extends AppCompatActivity implements
         signInButton.setOnClickListener(this);
 
         FragmentManager fm = getFragmentManager();
+
+        mRegistrationBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+                boolean sentToken = sharedPreferences.getBoolean(NamedPreferences.SENT_TOKEN_TO_SERVER, false);
+                if (sentToken) {
+                    Toast.makeText(getApplicationContext(), "Token retrieved and sent to server! You can now use gcmsender to send downstream messages to this app.", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "An error occurred while either fetching the InstanceID token,\n" +
+                            "        sending the fetched token to the server or subscribing to the PubSub topic. Please try\n" +
+                            "        running the sample again.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        };
 
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
@@ -136,6 +165,19 @@ public class SignInActivity extends AppCompatActivity implements
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleSignInResult(result);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
+                new IntentFilter(NamedPreferences.REGISTRATION_COMPLETE));
+    }
+
+    @Override
+    protected void onPause() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
+        super.onPause();
     }
 
     private void handleSignInResult(GoogleSignInResult result) {
@@ -209,6 +251,22 @@ public class SignInActivity extends AppCompatActivity implements
                 signIn();
                 break;
         }
+    }
+
+    private boolean checkPlayServices() {
+        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
+        int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (apiAvailability.isUserResolvableError(resultCode)) {
+                apiAvailability.getErrorDialog(this, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST)
+                        .show();
+            } else {
+                Log.i(TAG, "This device is not supported.");
+                finish();
+            }
+            return false;
+        }
+        return true;
     }
 
     private void showSnackError(String message) {
@@ -309,12 +367,21 @@ public class SignInActivity extends AppCompatActivity implements
         // onPostExecute displays the results of the AsyncTask.
         @Override
         protected void onPostExecute(User result) {
+
             hideProgressDialog();
 
             if (result == null) {
                 //Toast.makeText(getApplicationContext(), "Erreur d'authentification", Toast.LENGTH_SHORT).show();
                 showSnackError("Erreur d'authentification");
             } else {
+
+                if (checkPlayServices()) {
+                    // Start IntentService to register this application with GCM.
+                    Intent intent = new Intent(SignInActivity.this, RegistrationIntentService.class);
+                    intent.putExtra("user", result);
+                    startService(intent);
+                }
+
                 Intent intent = new Intent(getBaseContext(), MainActivity.class);
                 intent.putExtra("user", result);
                 startActivity(intent);

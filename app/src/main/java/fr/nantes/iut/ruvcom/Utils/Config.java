@@ -1,4 +1,4 @@
-package fr.nantes.iut.ruvcom.utils;
+package fr.nantes.iut.ruvcom.Utils;
 
 /**
  * Created by ughostephan on 18/01/2016.
@@ -8,12 +8,16 @@ public class Config {
     public static final String SECRET_TOKEN = "Ok2CCaEaHngyNPMqPRcE5MkvzIAwpnrJc5zECIO9fAW9dnxI1zppPvRKu7pnU8tbeFrjjke5m8wDacadWWWOFgiLcr1xvdxhUVMA1WWTJkLiFFmFAAGwS";
     // Directory name to store captured images and videos
     public static final String LOCAL_IMAGE_DIRECTORY_NAME = "RUVComFileUpload";
-    // API KEY
+    // GOOGLE API KEY
     public static final String API_KEY = "AIzaSyCoFVlSOijLQC1HlQswRQ3-YI8EkeODTZQ";
+    // SENDER ID
+    public static final String SENDER_ID = "ruvcom-1194";
     // Url de base de L'API
     public static final String BASE_API_URL = "http://dev.ugho-stephan.fr/api/";
     // PARAM : googleID
     public static final String API_USER_EXIST = BASE_API_URL + "userExists/%s";
+    // PARAM : userID
+    public static final String API_USER_REGISTER_GCM = BASE_API_URL + "registerGCM/%s";
     // PARAM : NULL
     public static final String API_USER_GET_ALL = BASE_API_URL + "getUsers";
     // PARAM : idUser
