@@ -21,9 +21,20 @@
         android:layout_height="wrap_content"
         android:padding="5dp"
         android:layout_weight="1"
-        android:weightSum="11"
+        android:weightSum="14"
         android:orientation="horizontal"
         android:gravity="center_vertical">
+
+        <ImageButton
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:padding="8dp"
+            android:id="@+id/cameraButton"
+            android:background="@null"
+            android:src="@drawable/ic_menu_camera"
+            android:scaleType="fitCenter"
+            android:layout_weight="6" />
+
         <EditText
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -37,7 +48,7 @@
             android:id="@+id/sendButton"
             android:src="@drawable/ic_send_black_24dp"
             android:scaleType="fitCenter"
-            android:background="@drawable/roundcorner"
-            android:layout_weight="9" />
+        android:background="@null"
+            android:layout_weight="6" />
     </LinearLayout>
 </LinearLayout>
