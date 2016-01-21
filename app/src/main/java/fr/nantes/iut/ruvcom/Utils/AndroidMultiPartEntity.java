@@ -14,7 +14,7 @@ import java.nio.charset.Charset;
 @SuppressWarnings("deprecation")
 public class AndroidMultiPartEntity extends MultipartEntity {
 
-    private final ProgressListener listener;
+    private ProgressListener listener;
 
     public AndroidMultiPartEntity(final ProgressListener listener) {
         super();
