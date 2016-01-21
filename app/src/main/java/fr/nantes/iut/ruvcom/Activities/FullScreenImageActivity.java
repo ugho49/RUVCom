@@ -21,8 +21,6 @@ public class FullScreenImageActivity extends AppCompatActivity {
         String imageUrl = getIntent().getStringExtra("imageUrl");
 
         setContentView(R.layout.activity_full_screen_image);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
         fullScreenImageView = (ImageView) findViewById(R.id.fullScreenImageView);
 
