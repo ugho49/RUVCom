@@ -130,21 +130,13 @@ public class UploadActivity extends AppCompatActivity {
                         });
 
                 final File sourceFile = new File(filePath);
-                /*final String name = sourceFile.getName();
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                Bitmap bm = BitmapFactory.decodeFile(filePath);
-                bm.compress(Bitmap.CompressFormat.JPEG, 90, baos);*/
-
-                FileBody fileBody = new FileBody(sourceFile);
 
                 // Adding file data to http body
-                entity.addPart("image", fileBody);
-                //entity.addPart("image", new ByteArrayBody(baos.toByteArray(), name));
+                entity.addPart("image", new FileBody(sourceFile));
                 totalSize = entity.getContentLength();
                 entity.addPart("token", new StringBody(Config.SECRET_TOKEN));
 
                 JSONObject response = new Requestor(URL).post(entity);
-
 
                 if(response != null) {
                     if (!response.isNull("data")) {
@@ -163,6 +155,20 @@ public class UploadActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Message result) {
+            try {
+                File file = new File(filePath);
+
+                file.delete();
+                if(file.getParentFile().isDirectory()) {
+                    File directory = file.getParentFile();
+
+                    if(directory.listFiles().length == 0) {
+                        directory.delete();
+                    }
+                }
+            } catch (Exception e) {
+                Log.e("tag", e.getMessage());
+            }
 
             if(result == null) {
                 // finish error
