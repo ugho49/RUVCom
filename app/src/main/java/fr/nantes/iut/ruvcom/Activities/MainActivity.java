@@ -154,12 +154,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
     }
 
     @Override
@@ -301,8 +295,13 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public void onClick(DialogInterface dialog, int position) {
                         User u = adapter.getItem(position);
-                        Toast.makeText(getApplicationContext(), "Click sur utilisateur - id  : " + u.getId() + ", name : " + u.getDisplayName(), Toast.LENGTH_SHORT).show();
-                        //dialog.dismiss();
+
+                        Intent conversationIntent = new Intent(getBaseContext(), ConversationActivity.class);
+                        conversationIntent.putExtra("user", user);
+                        conversationIntent.putExtra("distantUser", u);
+                        startActivity(conversationIntent);
+
+                        overridePendingTransition(R.anim.in_right_to_left, R.anim.out_right_to_left);
                     }
                 });
         AlertDialog alert = builder.create();
