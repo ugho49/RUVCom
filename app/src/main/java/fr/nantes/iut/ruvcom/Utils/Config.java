@@ -18,6 +18,8 @@ public class Config {
     public static final String API_USER_EXIST = BASE_API_URL + "userExists/%s";
     // PARAM : userID
     public static final String API_USER_REGISTER_GCM = BASE_API_URL + "registerGCM/%s";
+    // PARAM : idUser
+    public static final String API_USER_DELETE_GCM = BASE_API_URL + "deleteGCM/%s";
     // PARAM : NULL
     public static final String API_USER_GET_ALL = BASE_API_URL + "getUsers";
     // PARAM : idUser
@@ -34,6 +36,8 @@ public class Config {
     public static final String API_MESSAGE_POST = BASE_API_URL + "createMessage/%s/%s";
     // PARAM : idSender, idReceiver
     public static final String API_UPLOAD_PICTURE = BASE_API_URL + "uploadPicture/%s/%s";
+    // PARAM : idSender, idReceiver, geoLat, geoLong
+    public static final String API_UPLOAD_PICTURE_GEO = BASE_API_URL + "uploadPicture/%s/%s/%s/%s";
     // PARAM : idUser, idDistantUser
     public static final String API_UPDATE_MESSAGE_READ = BASE_API_URL + "setMessageRead/%s/%s";
 }

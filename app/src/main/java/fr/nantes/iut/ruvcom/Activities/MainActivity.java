@@ -31,6 +31,8 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -222,6 +224,7 @@ public class MainActivity extends RUVBaseActivity
                                 Log.d(TAG, "signOut status : " + status.getStatusCode() + " - " + status.getStatusMessage());
 
                                 Toast.makeText(getApplicationContext(), "Déconnexion réussie", Toast.LENGTH_SHORT).show();
+                                deleteGCMOnBase();
                                 Intent otherActivity = new Intent(getBaseContext(), SignInActivity.class);
                                 startActivity(otherActivity);
                                 finish();
@@ -289,6 +292,29 @@ public class MainActivity extends RUVBaseActivity
                     DialogListUserAdapter adapter = new DialogListUserAdapter(getApplicationContext(), result);
                     afficherDialogListUser(adapter);
                 }
+            }
+        }.execute();
+    }
+
+    private void deleteGCMOnBase() {
+        new AsyncTask<Void, Void, String> () {
+
+            @Override
+            protected String doInBackground(Void... u) {
+
+                try{
+                    String URL = String.format(Config.API_USER_DELETE_GCM, String.valueOf(user.getId()));
+
+                    ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
+                    params.add(new BasicNameValuePair("token", Config.SECRET_TOKEN));
+
+                    final JSONObject json = new Requestor(URL).post(params);
+                }
+                catch(Exception ex) {
+                    Log.d(TAG, "Fail : " + ex.getMessage());
+                }
+
+                return null;
             }
         }.execute();
     }

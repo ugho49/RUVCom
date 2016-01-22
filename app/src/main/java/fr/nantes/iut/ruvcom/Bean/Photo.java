@@ -12,6 +12,8 @@ public class Photo extends BaseBean {
     private int id;
     private String url;
     private String filesize;
+    private String latitude;
+    private String longitude;
 
     public Photo(JSONObject data) {
         if (data != null) {
@@ -19,10 +21,38 @@ public class Photo extends BaseBean {
                 this.id = data.getInt("id");
                 this.url = data.getString("url");
                 this.filesize = data.getString("filesize");
+
+                if(!data.isNull("geoLat")) {
+                    this.latitude = data.getString("geoLat");
+                } else {
+                    this.latitude = "";
+                }
+
+                if(!data.isNull("geoLong")) {
+                    this.longitude = data.getString("geoLong");
+                } else {
+                    this.longitude = "";
+                }
             } catch (JSONException e) {
                 Log.e("PHOTO", e.getMessage());
             }
         }
+    }
+
+    public String getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+    }
+
+    public String getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
     }
 
     public int getId() {

@@ -45,6 +45,7 @@ public class UploadActivity extends RUVBaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -118,7 +119,14 @@ public class UploadActivity extends RUVBaseActivity {
             Message result = null;
 
             try {
-                String URL = String.format(Config.API_UPLOAD_PICTURE, String.valueOf(user.getId()), String.valueOf(distantUser.getId()));
+                String URL;
+                if (mLastLocation != null) {
+                    String geoLat = String.valueOf(mLastLocation.getLatitude());
+                    String geoLong = String.valueOf(mLastLocation.getLongitude());
+                    URL = String.format(Config.API_UPLOAD_PICTURE_GEO, String.valueOf(user.getId()), String.valueOf(distantUser.getId()), geoLat, geoLong);
+                } else {
+                    URL = String.format(Config.API_UPLOAD_PICTURE, String.valueOf(user.getId()), String.valueOf(distantUser.getId()));
+                }
 
                 AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
                         new AndroidMultiPartEntity.ProgressListener() {

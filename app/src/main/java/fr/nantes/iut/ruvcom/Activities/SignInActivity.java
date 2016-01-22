@@ -1,5 +1,6 @@
 package fr.nantes.iut.ruvcom.Activities;
 
+import android.Manifest;
 import android.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
@@ -7,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -14,13 +16,12 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -32,6 +33,7 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.location.LocationServices;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -42,11 +44,11 @@ import java.util.ArrayList;
 
 import fr.nantes.iut.ruvcom.Bean.User;
 import fr.nantes.iut.ruvcom.R;
-import fr.nantes.iut.ruvcom.gcm.RegistrationIntentService;
 import fr.nantes.iut.ruvcom.Utils.Config;
 import fr.nantes.iut.ruvcom.Utils.ConnectionDetector;
 import fr.nantes.iut.ruvcom.Utils.NamedPreferences;
 import fr.nantes.iut.ruvcom.Utils.Requestor;
+import fr.nantes.iut.ruvcom.gcm.RegistrationIntentService;
 
 /**
  * Activity to demonstrate basic retrieval of the Google user's ID, email address, and basic
@@ -54,6 +56,7 @@ import fr.nantes.iut.ruvcom.Utils.Requestor;
  */
 public class SignInActivity extends RUVBaseActivity implements
         GoogleApiClient.OnConnectionFailedListener,
+        GoogleApiClient.ConnectionCallbacks,
         View.OnClickListener {
 
     private static final String TAG = "SignInActivity";
@@ -61,7 +64,6 @@ public class SignInActivity extends RUVBaseActivity implements
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private static final int RC_SIGN_IN = 9001;
 
-    private GoogleApiClient mGoogleApiClient;
     private GoogleSignInAccount mGoogleSignInAccount;
 
     private BroadcastReceiver mRegistrationBroadcastReceiver;
@@ -124,8 +126,10 @@ public class SignInActivity extends RUVBaseActivity implements
         // options specified by gso.
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                .build();
+        .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(this)
+        .build();
 
         // Customize sign-in button. The sign-in button can be displayed in
         // multiple sizes and color schemes. It can also be contextually
@@ -173,6 +177,16 @@ public class SignInActivity extends RUVBaseActivity implements
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleSignInResult(result);
         }
+    }
+
+    @Override
+    public void onConnected(Bundle connectionHint) {
+        checkLastLocalisation(this);
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
     }
 
     @Override
