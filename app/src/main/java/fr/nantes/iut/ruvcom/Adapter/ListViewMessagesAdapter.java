@@ -130,10 +130,6 @@ public class ListViewMessagesAdapter extends BaseAdapter {
                     fullScreenImageIntent.putExtra("imageUrl", message.getPhoto().getUrl());
                     fullScreenImageIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     _c.startActivity(fullScreenImageIntent);
-
-                   /* Activity activity = (Activity) _c;
-                    activity.startActivity(fullScreenImageIntent);
-                    activity.overridePendingTransition(R.anim.in_right_to_left, R.anim.out_right_to_left);*/
                 }
             });
         } else {

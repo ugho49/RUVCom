@@ -12,6 +12,11 @@ import android.util.Log;
 
 import com.google.android.gms.gcm.GcmListenerService;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import fr.nantes.iut.ruvcom.Bean.Photo;
+import fr.nantes.iut.ruvcom.Bean.User;
 import fr.nantes.iut.ruvcom.R;
 import fr.nantes.iut.ruvcom.Activities.SignInActivity;
 
@@ -33,6 +38,27 @@ public class RUVGcmListenerService extends GcmListenerService {
     @Override
     public void onMessageReceived(String from, Bundle data) {
         String message = data.getString("message");
+        String jsonUser = data.getString("userSender");
+        String jsonPhoto = data.getString("photo");
+
+        User distantUser = null;
+        Photo photo = null;
+
+        try {
+            if(jsonUser != null && jsonUser != "") {
+                JSONObject jsonObjectUser = new JSONObject(jsonUser);
+                distantUser = new User(jsonObjectUser);
+            }
+
+            if(jsonPhoto != null && jsonPhoto != "") {
+                JSONObject jsonObjectPhoto = new JSONObject(jsonPhoto);
+                photo = new Photo(jsonObjectPhoto);
+            }
+        }
+        catch (JSONException e) {
+            Log.e(TAG, e.getMessage());
+        }
+
         Log.d(TAG, "From: " + from);
         Log.d(TAG, "Message: " + message);
 
@@ -42,39 +68,32 @@ public class RUVGcmListenerService extends GcmListenerService {
             // normal downstream message.
         }
 
-        // [START_EXCLUDE]
-        /**
-         * Production applications would usually process the message here.
-         * Eg: - Syncing with server.
-         *     - Store message in local database.
-         *     - Update UI.
-         */
-
-        /**
-         * In some cases it may be useful to show a notification indicating to the user
-         * that a message was received.
-         */
-        sendNotification(message);
-        // [END_EXCLUDE]
+        sendNotification(distantUser, message, photo);
     }
-    // [END receive_message]
 
     /**
      * Create and show a simple notification containing the received GCM message.
      *
      * @param message GCM message received.
      */
-    private void sendNotification(String message) {
+    private void sendNotification(User distantuser, String message, Photo photo) {
         Intent intent = new Intent(this, SignInActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
+        String title = "Message de " + distantuser.getDisplayName();
+        String content = message;
+
+        if(photo != null) {
+            content = "Vous avez reçu une photo";
+        }
+
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle("GCM Message")
-                .setContentText(message)
+                .setContentTitle(title)
+                .setContentText(content)
                 .setAutoCancel(true)
                 .setSound(defaultSoundUri)
                 .setContentIntent(pendingIntent);

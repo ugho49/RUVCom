@@ -67,8 +67,6 @@
                 <category android:name="fr.nantes.iut.ruvcom" />
             </intent-filter>
         </receiver>
-
-        <!-- [START gcm_listener] -->
         <service
             android:name="fr.nantes.iut.ruvcom.gcm.RUVGcmListenerService"
             android:exported="false" >
@@ -76,8 +74,6 @@
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
             </intent-filter>
         </service>
-        <!-- [END gcm_listener] -->
-        <!-- [START instanceId_listener] -->
         <service
             android:name="fr.nantes.iut.ruvcom.gcm.MyInstanceIDListenerService"
             android:exported="false">
@@ -85,7 +81,6 @@
                 <action android:name="com.google.android.gms.iid.InstanceID"/>
             </intent-filter>
         </service>
-        <!-- [END instanceId_listener] -->
         <service
             android:name="fr.nantes.iut.ruvcom.gcm.RegistrationIntentService"
             android:exported="false">
