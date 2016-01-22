@@ -16,6 +16,7 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 public class RUVComApplication extends Application implements Application.ActivityLifecycleCallbacks {
 
     public static boolean applicationOnPause = true;
+    public static String activityRunningName = "";
 
     @Override
     public void onCreate() {
@@ -41,36 +42,37 @@ public class RUVComApplication extends Application implements Application.Activi
     @Override
     public void onActivityCreated(Activity arg0, Bundle arg1) {
         Log.e("", "onActivityCreated");
-
     }
+
     @Override
     public void onActivityDestroyed(Activity activity) {
-        applicationOnPause = true;
         Log.e("","onActivityDestroyed ");
-
     }
+
     @Override
     public void onActivityPaused(Activity activity) {
         applicationOnPause = true;
+        activityRunningName = activity.getClass().getName();
         Log.e("","onActivityPaused "+activity.getClass());
-
     }
+
     @Override
     public void onActivityResumed(Activity activity) {
         applicationOnPause = false;
+        activityRunningName = activity.getClass().getName();
         Log.e("","onActivityResumed "+activity.getClass());
-
     }
+
     @Override
     public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
         Log.e("","onActivitySaveInstanceState");
-
     }
+
     @Override
     public void onActivityStarted(Activity activity) {
-        applicationOnPause = false;
         Log.e("","onActivityStarted");
     }
+
     @Override
     public void onActivityStopped(Activity activity) {
         Log.e("","onActivityStopped");

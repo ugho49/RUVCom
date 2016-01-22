@@ -6,4 +6,5 @@ package fr.nantes.iut.ruvcom.Utils;
 public class NamedPreferences {
     public static final String SENT_TOKEN_TO_SERVER = "sentTokenToServer";
     public static final String REGISTRATION_COMPLETE = "registrationComplete";
+    public static final String DISTANT_USER_FROM_PUSH = "distantUserFromNotification";
 }

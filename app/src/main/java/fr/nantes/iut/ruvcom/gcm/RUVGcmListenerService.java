@@ -22,6 +22,7 @@ import fr.nantes.iut.ruvcom.Bean.User;
 import fr.nantes.iut.ruvcom.R;
 import fr.nantes.iut.ruvcom.Activities.SignInActivity;
 import fr.nantes.iut.ruvcom.RUVComApplication;
+import fr.nantes.iut.ruvcom.Utils.NamedPreferences;
 
 /**
  * Created by ughostephan on 21/01/2016.
@@ -85,6 +86,7 @@ public class RUVGcmListenerService extends GcmListenerService {
     private void sendNotification(User distantuser, String message, Photo photo) {
         Intent intent = new Intent(this, SignInActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra(NamedPreferences.DISTANT_USER_FROM_PUSH, distantuser);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 

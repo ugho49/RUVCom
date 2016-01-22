@@ -44,6 +44,7 @@ import fr.nantes.iut.ruvcom.Bean.Conversation;
 import fr.nantes.iut.ruvcom.Bean.User;
 import fr.nantes.iut.ruvcom.R;
 import fr.nantes.iut.ruvcom.Utils.Config;
+import fr.nantes.iut.ruvcom.Utils.NamedPreferences;
 import fr.nantes.iut.ruvcom.Utils.Requestor;
 
 public class MainActivity extends RUVBaseActivity
@@ -72,6 +73,7 @@ public class MainActivity extends RUVBaseActivity
     private ImageLoader imageLoader;
 
     private static User user;
+    private User distantUserFromNotif = null;
 
     private ListViewConversationAdapter adapter;
 
@@ -83,6 +85,11 @@ public class MainActivity extends RUVBaseActivity
 
         user = (User) getIntent().getSerializableExtra("user");
         imageLoader = ImageLoader.getInstance();
+
+        if (getIntent().getExtras().containsKey(NamedPreferences.DISTANT_USER_FROM_PUSH)) {
+            distantUserFromNotif = (User) getIntent().getSerializableExtra(NamedPreferences.DISTANT_USER_FROM_PUSH);
+            startConversationActivity(distantUserFromNotif);
+        }
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -302,14 +309,7 @@ public class MainActivity extends RUVBaseActivity
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int position) {
-                        User u = adapter.getItem(position);
-
-                        Intent conversationIntent = new Intent(getBaseContext(), ConversationActivity.class);
-                        conversationIntent.putExtra("user", user);
-                        conversationIntent.putExtra("distantUser", u);
-                        startActivity(conversationIntent);
-
-                        overridePendingTransition(R.anim.in_right_to_left, R.anim.out_right_to_left);
+                        startConversationActivity(adapter.getItem(position));
                     }
                 });
         AlertDialog alert = builder.create();
@@ -338,9 +338,13 @@ public class MainActivity extends RUVBaseActivity
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        startConversationActivity(adapter.getItem(position).getUser());
+    }
+
+    private void startConversationActivity(User distantUser) {
         Intent conversationIntent = new Intent(getBaseContext(), ConversationActivity.class);
         conversationIntent.putExtra("user", user);
-        conversationIntent.putExtra("distantUser", adapter.getItem(position).getUser());
+        conversationIntent.putExtra("distantUser", distantUser);
         startActivity(conversationIntent);
 
         overridePendingTransition(R.anim.in_right_to_left, R.anim.out_right_to_left);

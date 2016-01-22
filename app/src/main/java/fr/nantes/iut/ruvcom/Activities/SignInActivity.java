@@ -70,6 +70,8 @@ public class SignInActivity extends RUVBaseActivity implements
     private ProgressDialog mProgressDialog;
     private SignInButton signInButton;
 
+    private User distantUserFromNotif = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,6 +89,12 @@ public class SignInActivity extends RUVBaseActivity implements
 
         // Button listeners
         signInButton.setOnClickListener(this);
+
+        if(getIntent().getExtras() != null) {
+            if (getIntent().getExtras().containsKey(NamedPreferences.DISTANT_USER_FROM_PUSH)) {
+                distantUserFromNotif = (User) getIntent().getSerializableExtra(NamedPreferences.DISTANT_USER_FROM_PUSH);
+            }
+        }
 
         FragmentManager fm = getFragmentManager();
 
@@ -384,6 +392,11 @@ public class SignInActivity extends RUVBaseActivity implements
 
                 Intent intent = new Intent(getBaseContext(), MainActivity.class);
                 intent.putExtra("user", result);
+
+                if(distantUserFromNotif != null) {
+                    intent.putExtra(NamedPreferences.DISTANT_USER_FROM_PUSH, distantUserFromNotif);
+                }
+
                 startActivity(intent);
                 finish();
             }
