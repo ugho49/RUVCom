@@ -2,6 +2,7 @@ package fr.nantes.iut.ruvcom.Activities;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -61,14 +62,14 @@ public class MainActivity extends RUVBaseActivity
     private NavigationView navigationView;
     private ActionBarDrawerToggle toggle;
 
-    private ProgressDialog mProgressDialog;
+    public static ProgressDialog mProgressDialog;
 
     private CircularImageView navAvatar;
     private TextView navDisplayName;
     private TextView navEmail;
     private ImageView navBackground;
 
-    private ListView convListView;
+    public static ListView convListView;
 
     private GoogleApiClient mGoogleApiClient;
     private ImageLoader imageLoader;
@@ -76,13 +77,17 @@ public class MainActivity extends RUVBaseActivity
     public static User user;
     private User distantUserFromNotif = null;
 
-    private ListViewConversationAdapter adapter;
+    public static ListViewConversationAdapter adapter;
+
+    public static Context applicationContext;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        applicationContext = getApplicationContext();
 
         user = (User) getIntent().getSerializableExtra("user");
         imageLoader = ImageLoader.getInstance();
@@ -136,17 +141,17 @@ public class MainActivity extends RUVBaseActivity
         new getConvTask().execute();
     }
 
-    private void showProgressDialog() {
+    public static void showProgressDialog() {
         if (mProgressDialog == null) {
-            mProgressDialog = new ProgressDialog(this);
-            mProgressDialog.setMessage(getString(R.string.loading));
+            mProgressDialog = new ProgressDialog(applicationContext);
+            mProgressDialog.setMessage(applicationContext.getString(R.string.loading));
             mProgressDialog.setIndeterminate(true);
         }
 
         mProgressDialog.show();
     }
 
-    private void hideProgressDialog() {
+    public static void hideProgressDialog() {
         if (mProgressDialog != null && mProgressDialog.isShowing()) {
             mProgressDialog.hide();
         }
@@ -356,8 +361,8 @@ public class MainActivity extends RUVBaseActivity
         Log.d(TAG, "onConnectionFailed:" + connectionResult);
     }
 
-    private void loadListView(List<Conversation> conversationList) {
-        adapter = new ListViewConversationAdapter(getApplicationContext(), conversationList);
+    public static void loadListView(List<Conversation> conversationList) {
+        adapter = new ListViewConversationAdapter(applicationContext, conversationList);
         convListView.setAdapter(adapter);
     }
 
@@ -375,11 +380,11 @@ public class MainActivity extends RUVBaseActivity
         overridePendingTransition(R.anim.in_right_to_left, R.anim.out_right_to_left);
     }
 
-    private class getConvTask extends AsyncTask<Void, Void, List<Conversation>> {
+    public static class getConvTask extends AsyncTask<Void, Void, List<Conversation>> {
 
         @Override
         protected void onPreExecute() {
-            showProgressDialog();
+            //showProgressDialog();
         }
 
         @Override
@@ -438,7 +443,11 @@ public class MainActivity extends RUVBaseActivity
                 loadListView(result);
             }
 
-            hideProgressDialog();
+            //hideProgressDialog();
         }
+    }
+
+    public static void reloadListConv() {
+        new getConvTask().execute();
     }
 }
