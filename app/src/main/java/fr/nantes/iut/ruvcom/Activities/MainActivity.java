@@ -11,7 +11,6 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -72,7 +71,7 @@ public class MainActivity extends RUVBaseActivity
     private GoogleApiClient mGoogleApiClient;
     private ImageLoader imageLoader;
 
-    private static User user;
+    public static User user;
     private User distantUserFromNotif = null;
 
     private ListViewConversationAdapter adapter;

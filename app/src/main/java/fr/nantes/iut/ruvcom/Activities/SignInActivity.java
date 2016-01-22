@@ -104,11 +104,11 @@ public class SignInActivity extends RUVBaseActivity implements
                 SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
                 boolean sentToken = sharedPreferences.getBoolean(NamedPreferences.SENT_TOKEN_TO_SERVER, false);
                 if (sentToken) {
-                    Toast.makeText(getApplicationContext(), "Token retrieved and sent to server! You can now use gcmsender to send downstream messages to this app.", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "Token retrieved and sent to server! You can now use gcmsender to send downstream messages to this app.");
                 } else {
-                    Toast.makeText(getApplicationContext(), "An error occurred while either fetching the InstanceID token,\n" +
-                            "        sending the fetched token to the server or subscribing to the PubSub topic. Please try\n" +
-                            "        running the sample again.", Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "An error occurred while either fetching the InstanceID token,\n" +
+                            "sending the fetched token to the server or subscribing to the PubSub topic. Please try\n" +
+                            "running the sample again.");
                 }
             }
         };
@@ -379,7 +379,6 @@ public class SignInActivity extends RUVBaseActivity implements
             hideProgressDialog();
 
             if (result == null) {
-                //Toast.makeText(getApplicationContext(), "Erreur d'authentification", Toast.LENGTH_SHORT).show();
                 showSnackError("Erreur d'authentification");
             } else {
 

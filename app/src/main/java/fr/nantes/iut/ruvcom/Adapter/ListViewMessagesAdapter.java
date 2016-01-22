@@ -39,6 +39,10 @@ public class ListViewMessagesAdapter extends BaseAdapter {
         this.distantUser = distantUser;
     }
 
+    public void setDistantUser(User distantUser) {
+        this.distantUser = distantUser;
+    }
+
     public void setList(List<Message> list) {
         this.list = list;
     }

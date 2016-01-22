@@ -8,7 +8,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
@@ -152,14 +151,12 @@ public class ConversationActivity extends RUVBaseActivity
             } else if (resultCode == RESULT_CANCELED) {
 
                 // user cancelled Image capture
-                Toast.makeText(getApplicationContext(),
-                        "User cancelled image capture", Toast.LENGTH_SHORT)
-                        .show();
+                Log.d(TAG, "User cancelled image capture");
 
             } else {
                 // failed to capture image
                 Toast.makeText(getApplicationContext(),
-                        "Sorry! Failed to capture image", Toast.LENGTH_SHORT)
+                        "Impossible de capturer la photo", Toast.LENGTH_SHORT)
                         .show();
             }
         } else if (requestCode == UPLOAD_ACTIVITY_REQUEST_CODE) {
@@ -171,7 +168,7 @@ public class ConversationActivity extends RUVBaseActivity
 
             } else {
                 // failed to capture image
-                Toast.makeText(getApplicationContext(), "Upload Failed !", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Erreur lors de l'envoi, vérifier votre connexion réseau !", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -280,7 +277,10 @@ public class ConversationActivity extends RUVBaseActivity
                     adapter = new ListViewMessagesAdapter(context, messages, user, distantUser);
                 } else {
                     adapter.setList(messages);
+                    adapter.setDistantUser(distantUser);
                 }
+
+                updateRead();
 
                 return null;
             }
@@ -346,7 +346,6 @@ public class ConversationActivity extends RUVBaseActivity
             if(error) {
                 Toast.makeText(getBaseContext(), "Message non envoyé :(", Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(getBaseContext(), "Message envoyé !", Toast.LENGTH_SHORT).show();
                 loadListView();
             }
         }
@@ -365,16 +364,7 @@ public class ConversationActivity extends RUVBaseActivity
             //List<Message> result = new ArrayList<>();
 
             try{
-                // UPDATE MESSAGES READ
-                String URL_UPDATE_MESSAGE_READ = String.format(Config.API_UPDATE_MESSAGE_READ, String.valueOf(user.getId()), String.valueOf(distantUser.getId()));
-
-                ArrayList<NameValuePair> params = new ArrayList<>();
-                params.add(new BasicNameValuePair("token", Config.SECRET_TOKEN));
-
-                new Requestor(URL_UPDATE_MESSAGE_READ).post(params);
-
-                // END UPDATE
-
+                updateRead();
 
                 String URL = String.format(Config.API_MESSAGES_GET, String.valueOf(user.getId()), String.valueOf(distantUser.getId()));
 
@@ -409,5 +399,16 @@ public class ConversationActivity extends RUVBaseActivity
         protected void onPostExecute(String result) {
             loadListView();
         }
+    }
+
+    public static void updateRead() {
+        // UPDATE MESSAGES READ
+        String URL_UPDATE_MESSAGE_READ = String.format(Config.API_UPDATE_MESSAGE_READ, String.valueOf(user.getId()), String.valueOf(distantUser.getId()));
+
+        ArrayList<NameValuePair> params = new ArrayList<>();
+        params.add(new BasicNameValuePair("token", Config.SECRET_TOKEN));
+
+        new Requestor(URL_UPDATE_MESSAGE_READ).post(params);
+        // END UPDATE
     }
 }

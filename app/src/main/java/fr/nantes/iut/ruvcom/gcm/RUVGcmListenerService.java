@@ -19,6 +19,7 @@ import org.json.JSONObject;
 import java.util.Date;
 
 import fr.nantes.iut.ruvcom.Activities.ConversationActivity;
+import fr.nantes.iut.ruvcom.Activities.MainActivity;
 import fr.nantes.iut.ruvcom.Activities.RUVBaseActivity;
 import fr.nantes.iut.ruvcom.Bean.Conversation;
 import fr.nantes.iut.ruvcom.Bean.Message;
@@ -77,14 +78,7 @@ public class RUVGcmListenerService extends GcmListenerService {
             Log.e(TAG, e.getMessage());
         }
 
-        Log.d(TAG, "From: " + from);
-        Log.d(TAG, "Message: " + message);
-
-        if (from.startsWith("/topics/")) {
-            // message received from some topic.
-        } else {
-            // normal downstream message.
-        }
+        Log.d(TAG, "Notification Content " + message.getMessage());
 
         if(RUVComApplication.applicationOnPause) {
             sendNotification(distantUser, message, photo, false);
@@ -101,6 +95,8 @@ public class RUVGcmListenerService extends GcmListenerService {
                         sendNotification(distantUser, message, photo, true);
                     }
                 }
+            } else {
+                sendNotification(distantUser, message, photo, true);
             }
         }
     }
@@ -111,7 +107,15 @@ public class RUVGcmListenerService extends GcmListenerService {
      * @param message GCM message received.
      */
     private void sendNotification(User distantuser, Message message, Photo photo, Boolean running) {
-        Intent intent = new Intent(this, SignInActivity.class);
+        Intent intent;
+
+        if(running) {
+            intent = new Intent(this, MainActivity.class);
+            intent.putExtra("user", MainActivity.user);
+        } else {
+            intent = new Intent(this, SignInActivity.class);
+        }
+
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra(NamedPreferences.DISTANT_USER_FROM_PUSH, distantuser);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,

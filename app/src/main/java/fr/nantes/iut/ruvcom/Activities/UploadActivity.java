@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -64,7 +63,7 @@ public class UploadActivity extends RUVBaseActivity {
             previewMedia();
             new UploadFileTask().execute();
         } else {
-            Toast.makeText(getApplicationContext(), "Erreur de capture", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Impossible de capturer la photo", Toast.LENGTH_LONG).show();
             finish();
         }
     }
