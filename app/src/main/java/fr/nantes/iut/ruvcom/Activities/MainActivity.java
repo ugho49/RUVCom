@@ -87,7 +87,7 @@ public class MainActivity extends RUVBaseActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        applicationContext = getApplicationContext();
+        applicationContext = this;
 
         user = (User) getIntent().getSerializableExtra("user");
         imageLoader = ImageLoader.getInstance();
@@ -142,6 +142,7 @@ public class MainActivity extends RUVBaseActivity
     }
 
     public static void showProgressDialog() {
+
         if (mProgressDialog == null) {
             mProgressDialog = new ProgressDialog(applicationContext);
             mProgressDialog.setMessage(applicationContext.getString(R.string.loading));
