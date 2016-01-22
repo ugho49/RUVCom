@@ -29,7 +29,7 @@ import fr.nantes.iut.ruvcom.Utils.AndroidMultiPartEntity;
 import fr.nantes.iut.ruvcom.Utils.Config;
 import fr.nantes.iut.ruvcom.Utils.Requestor;
 
-public class UploadActivity extends AppCompatActivity {
+public class UploadActivity extends RUVBaseActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 

@@ -52,7 +52,7 @@ import fr.nantes.iut.ruvcom.Utils.Requestor;
  * Activity to demonstrate basic retrieval of the Google user's ID, email address, and basic
  * profile.
  */
-public class SignInActivity extends AppCompatActivity implements
+public class SignInActivity extends RUVBaseActivity implements
         GoogleApiClient.OnConnectionFailedListener,
         View.OnClickListener {
 
@@ -168,14 +168,14 @@ public class SignInActivity extends AppCompatActivity implements
     }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
         LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
                 new IntentFilter(NamedPreferences.REGISTRATION_COMPLETE));
     }
 
     @Override
-    protected void onPause() {
+    public void onPause() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
         super.onPause();
     }

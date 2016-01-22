@@ -9,7 +9,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 
 import fr.nantes.iut.ruvcom.R;
 
-public class FullScreenImageActivity extends AppCompatActivity {
+public class FullScreenImageActivity extends RUVBaseActivity {
 
     private ImageView fullScreenImageView;
     private final ImageLoader imageLoader = ImageLoader.getInstance();

@@ -37,7 +37,7 @@ import fr.nantes.iut.ruvcom.R;
 import fr.nantes.iut.ruvcom.Utils.Config;
 import fr.nantes.iut.ruvcom.Utils.Requestor;
 
-public class ConversationActivity extends AppCompatActivity
+public class ConversationActivity extends RUVBaseActivity
         implements View.OnClickListener {
 
     // Camera activity request codes

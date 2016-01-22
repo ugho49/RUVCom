@@ -9,16 +9,19 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.gcm.GcmListenerService;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import fr.nantes.iut.ruvcom.Activities.RUVBaseActivity;
 import fr.nantes.iut.ruvcom.Bean.Photo;
 import fr.nantes.iut.ruvcom.Bean.User;
 import fr.nantes.iut.ruvcom.R;
 import fr.nantes.iut.ruvcom.Activities.SignInActivity;
+import fr.nantes.iut.ruvcom.RUVComApplication;
 
 /**
  * Created by ughostephan on 21/01/2016.
@@ -34,7 +37,6 @@ public class RUVGcmListenerService extends GcmListenerService {
      * @param data Data bundle containing message data as key/value pairs.
      *             For Set of keys use data.keySet().
      */
-    // [START receive_message]
     @Override
     public void onMessageReceived(String from, Bundle data) {
         String message = data.getString("message");
@@ -68,7 +70,11 @@ public class RUVGcmListenerService extends GcmListenerService {
             // normal downstream message.
         }
 
-        sendNotification(distantUser, message, photo);
+        if(RUVComApplication.applicationOnPause) {
+            sendNotification(distantUser, message, photo);
+        } else {
+            // TODO : recupérer activity et ouvrir
+        }
     }
 
     /**

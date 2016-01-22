@@ -46,7 +46,7 @@ import fr.nantes.iut.ruvcom.R;
 import fr.nantes.iut.ruvcom.Utils.Config;
 import fr.nantes.iut.ruvcom.Utils.Requestor;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends RUVBaseActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         GoogleApiClient.OnConnectionFailedListener, AdapterView.OnItemClickListener {
 
