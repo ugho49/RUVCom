@@ -153,7 +153,7 @@ public class MainActivity extends RUVBaseActivity
 
     @Override
     public void onBackPressed() {
-        // Nothing
+        finish();
     }
 
     @Override
@@ -218,6 +218,7 @@ public class MainActivity extends RUVBaseActivity
                                 Toast.makeText(getApplicationContext(), "Déconnexion réussie", Toast.LENGTH_SHORT).show();
                                 Intent otherActivity = new Intent(getBaseContext(), SignInActivity.class);
                                 startActivity(otherActivity);
+                                finish();
                             }
                         });
             }

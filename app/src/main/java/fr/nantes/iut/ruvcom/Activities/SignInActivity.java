@@ -385,6 +385,7 @@ public class SignInActivity extends RUVBaseActivity implements
                 Intent intent = new Intent(getBaseContext(), MainActivity.class);
                 intent.putExtra("user", result);
                 startActivity(intent);
+                finish();
             }
         }
     }
