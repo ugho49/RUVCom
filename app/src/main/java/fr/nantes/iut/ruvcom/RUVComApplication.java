@@ -52,14 +52,14 @@ public class RUVComApplication extends Application implements Application.Activi
     @Override
     public void onActivityPaused(Activity activity) {
         applicationOnPause = true;
-        activityRunningName = activity.getClass().getName();
+        activityRunningName = activity.getClass().getSimpleName();
         Log.e("","onActivityPaused "+activity.getClass());
     }
 
     @Override
     public void onActivityResumed(Activity activity) {
         applicationOnPause = false;
-        activityRunningName = activity.getClass().getName();
+        activityRunningName = activity.getClass().getSimpleName();
         Log.e("","onActivityResumed "+activity.getClass());
     }
 

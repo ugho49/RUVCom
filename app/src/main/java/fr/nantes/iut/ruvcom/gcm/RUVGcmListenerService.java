@@ -16,7 +16,12 @@ import com.google.android.gms.gcm.GcmListenerService;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Date;
+
+import fr.nantes.iut.ruvcom.Activities.ConversationActivity;
 import fr.nantes.iut.ruvcom.Activities.RUVBaseActivity;
+import fr.nantes.iut.ruvcom.Bean.Conversation;
+import fr.nantes.iut.ruvcom.Bean.Message;
 import fr.nantes.iut.ruvcom.Bean.Photo;
 import fr.nantes.iut.ruvcom.Bean.User;
 import fr.nantes.iut.ruvcom.R;
@@ -40,7 +45,16 @@ public class RUVGcmListenerService extends GcmListenerService {
      */
     @Override
     public void onMessageReceived(String from, Bundle data) {
-        String message = data.getString("message");
+        Message message = new Message();
+
+        message.setId(data.getInt("id"));
+        message.setMessage(data.getString("message"));
+        message.setIdUserSender(data.getInt("idUserSender"));
+        message.setIdUserReceiver(data.getInt("idUserReceiver"));
+        message.setIsRead(data.getBoolean("isRead"));
+        message.setDateTime(data.getString("dateTime"));
+        message.setPhoto(null);
+
         String jsonUser = data.getString("userSender");
         String jsonPhoto = data.getString("photo");
 
@@ -56,6 +70,7 @@ public class RUVGcmListenerService extends GcmListenerService {
             if(jsonPhoto != null && jsonPhoto != "") {
                 JSONObject jsonObjectPhoto = new JSONObject(jsonPhoto);
                 photo = new Photo(jsonObjectPhoto);
+                message.setPhoto(photo);
             }
         }
         catch (JSONException e) {
@@ -72,9 +87,21 @@ public class RUVGcmListenerService extends GcmListenerService {
         }
 
         if(RUVComApplication.applicationOnPause) {
-            sendNotification(distantUser, message, photo);
+            sendNotification(distantUser, message, photo, false);
         } else {
-            // TODO : recupérer activity et ouvrir
+
+            if(ConversationActivity.class.getSimpleName().equals(RUVComApplication.activityRunningName)) {
+                User currentDistantUser = ConversationActivity.distantUser;
+
+                if(currentDistantUser != null) {
+                    if(currentDistantUser.getId() == distantUser.getId()) {
+                        ConversationActivity.messages.add(message);
+                        ConversationActivity.loadListView();
+                    } else {
+                        sendNotification(distantUser, message, photo, true);
+                    }
+                }
+            }
         }
     }
 
@@ -83,7 +110,7 @@ public class RUVGcmListenerService extends GcmListenerService {
      *
      * @param message GCM message received.
      */
-    private void sendNotification(User distantuser, String message, Photo photo) {
+    private void sendNotification(User distantuser, Message message, Photo photo, Boolean running) {
         Intent intent = new Intent(this, SignInActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra(NamedPreferences.DISTANT_USER_FROM_PUSH, distantuser);
@@ -91,7 +118,7 @@ public class RUVGcmListenerService extends GcmListenerService {
                 PendingIntent.FLAG_ONE_SHOT);
 
         String title = "Message de " + distantuser.getDisplayName();
-        String content = message;
+        String content = message.getMessage();
 
         if(photo != null) {
             content = "Vous avez reçu une photo";

@@ -1,5 +1,6 @@
 package fr.nantes.iut.ruvcom.Activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -50,25 +51,30 @@ public class ConversationActivity extends RUVBaseActivity
 
     private static final String TAG = "ConversationActivity";
 
-    private User user;
-    private User distantUser;
+    public static User user;
+    public static User distantUser;
 
     private ImageButton sendButton;
     private ImageButton btnCapturePicture;
     private EditText editTextMessage;
     private Toolbar toolbar;
 
-    private ListViewMessagesAdapter adapter;
-    private ListView messageListView;
+    public static ListViewMessagesAdapter adapter;
+    public static ListView messageListView;
 
     private Uri fileUri; // file url to store image/video
 
-    private static List<Message> messages = new ArrayList<>();
+    public static List<Message> messages = new ArrayList<>();
+
+    public static Context context;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        context = getApplicationContext();
+
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         setContentView(R.layout.activity_conversation);
 
@@ -261,20 +267,31 @@ public class ConversationActivity extends RUVBaseActivity
     }
 
 
-    private void goBottomListView() {
+    public static void goBottomListView() {
         //messageListView.setSelection(messageListView.getCount() - 1);
         messageListView.smoothScrollToPosition(0, messageListView.getHeight());
     }
 
-    private void loadListView() {
-        if (adapter == null) {
-            adapter = new ListViewMessagesAdapter(getApplicationContext(), messages, user, distantUser);
-        } else {
-            adapter.setList(messages);
-        }
+    public static void loadListView() {
+        new AsyncTask<Void, Void, String>() {
+            @Override
+            protected String doInBackground(Void... u) {
+                if (adapter == null) {
+                    adapter = new ListViewMessagesAdapter(context, messages, user, distantUser);
+                } else {
+                    adapter.setList(messages);
+                }
 
-        messageListView.setAdapter(adapter);
-        goBottomListView();
+                return null;
+            }
+
+            // onPostExecute displays the results of the AsyncTask.
+            @Override
+            protected void onPostExecute(String result) {
+                messageListView.setAdapter(adapter);
+                goBottomListView();
+            }
+        }.execute();
     }
 
     private class sendMessageTask extends AsyncTask<Void, Void, Boolean> {

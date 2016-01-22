@@ -22,6 +22,9 @@ public class Message extends BaseBean {
     private boolean isRead;
     private Date dateTime;
 
+    public Message() {
+    }
+
     public Message(JSONObject data) {
         if (data != null) {
             try {
@@ -102,5 +105,14 @@ public class Message extends BaseBean {
 
     public void setDateTime(Date dateTime) {
         this.dateTime = dateTime;
+    }
+
+    public void setDateTime(String dateTime) {
+        try {
+            Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateTime);
+            this.dateTime = date;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 }
