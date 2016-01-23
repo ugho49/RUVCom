@@ -96,8 +96,10 @@ public class RUVGcmListenerService extends GcmListenerService {
                     }
                 }
             } else {
+                if(MainActivity.class.getSimpleName().equals(RUVComApplication.activityRunningName)) {
+                    MainActivity.reloadListConv();
+                }
                 sendNotification(distantUser, message, photo, true);
-                MainActivity.reloadListConv();
             }
         }
     }
