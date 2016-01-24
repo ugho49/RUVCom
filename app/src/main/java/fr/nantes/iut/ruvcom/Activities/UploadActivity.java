@@ -30,8 +30,6 @@ import fr.nantes.iut.ruvcom.Utils.Requestor;
 
 public class UploadActivity extends RUVBaseActivity {
 
-    private static final String TAG = MainActivity.class.getSimpleName();
-
     private ProgressBar progressBar;
     private String filePath = null;
     private TextView txtPercentage;
@@ -71,8 +69,8 @@ public class UploadActivity extends RUVBaseActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        overridePendingTransition(R.anim.in_left_to_right, R.anim.out_left_to_right);
+        //super.onBackPressed();
+        //overridePendingTransition(R.anim.in_left_to_right, R.anim.out_left_to_right);
     }
 
     /**
@@ -143,7 +141,7 @@ public class UploadActivity extends RUVBaseActivity {
                 totalSize = entity.getContentLength();
                 entity.addPart("token", new StringBody(Config.SECRET_TOKEN));
 
-                JSONObject response = new Requestor(URL).post(entity);
+                final JSONObject response = new Requestor(URL).post(entity);
 
                 if(response != null) {
                     if (!response.isNull("data")) {

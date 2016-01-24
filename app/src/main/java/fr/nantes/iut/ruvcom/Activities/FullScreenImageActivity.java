@@ -11,7 +11,6 @@ import fr.nantes.iut.ruvcom.R;
 
 public class FullScreenImageActivity extends RUVBaseActivity {
 
-    private ImageView fullScreenImageView;
     private final ImageLoader imageLoader = ImageLoader.getInstance();
 
     @Override
@@ -22,7 +21,7 @@ public class FullScreenImageActivity extends RUVBaseActivity {
 
         setContentView(R.layout.activity_full_screen_image);
 
-        fullScreenImageView = (ImageView) findViewById(R.id.fullScreenImageView);
+        ImageView fullScreenImageView = (ImageView) findViewById(R.id.fullScreenImageView);
 
         imageLoader.displayImage(imageUrl, fullScreenImageView);
     }

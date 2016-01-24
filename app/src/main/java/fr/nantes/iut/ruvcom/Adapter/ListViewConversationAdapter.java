@@ -1,6 +1,7 @@
 package fr.nantes.iut.ruvcom.Adapter;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -90,6 +91,9 @@ public class ListViewConversationAdapter extends BaseAdapter {
 
         if (conversation.getNotification()) {
             holder.notification.setVisibility(View.VISIBLE);
+            holder.displayName.setTypeface(null, Typeface.BOLD);
+            holder.email.setTypeface(null, Typeface.BOLD);
+            holder.lastDateMessage.setTypeface(null, Typeface.BOLD);
         } else {
             holder.notification.setVisibility(View.INVISIBLE);
         }

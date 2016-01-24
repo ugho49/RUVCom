@@ -1,5 +1,6 @@
 package fr.nantes.iut.ruvcom.Activities;
 
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -53,10 +54,7 @@ public class ConversationActivity extends RUVBaseActivity
     public static User user;
     public static User distantUser;
 
-    private ImageButton sendButton;
-    private ImageButton btnCapturePicture;
     private EditText editTextMessage;
-    private Toolbar toolbar;
 
     public static ListViewMessagesAdapter adapter;
     public static ListView messageListView;
@@ -80,11 +78,11 @@ public class ConversationActivity extends RUVBaseActivity
         user = (User) getIntent().getSerializableExtra("user");
         distantUser = (User) getIntent().getSerializableExtra("distantUser");
 
-        sendButton = (ImageButton) findViewById(R.id.sendButton);
-        btnCapturePicture = (ImageButton) findViewById(R.id.cameraButton);
+        ImageButton sendButton = (ImageButton) findViewById(R.id.sendButton);
+        ImageButton btnCapturePicture = (ImageButton) findViewById(R.id.cameraButton);
         editTextMessage = (EditText) findViewById(R.id.message);
         messageListView = (ListView) findViewById(R.id.listViewMessages);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
         sendButton.setOnClickListener(this);
         editTextMessage.setHint("Message à " + distantUser.getDisplayName());
@@ -99,6 +97,12 @@ public class ConversationActivity extends RUVBaseActivity
         } else {
             btnCapturePicture.setOnClickListener(this);
         }
+
+        // Disable notification if exist
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        notificationManager.cancelAll();
 
         new getMessagesTask().execute();
     }
@@ -319,7 +323,7 @@ public class ConversationActivity extends RUVBaseActivity
                 params.add(new BasicNameValuePair("token", Config.SECRET_TOKEN));
                 params.add(new BasicNameValuePair("message", message));
 
-                JSONObject json = new Requestor(URL).post(params);
+                final JSONObject json = new Requestor(URL).post(params);
 
                 if (json != null) {
                     error = json.getBoolean("error");
@@ -368,7 +372,7 @@ public class ConversationActivity extends RUVBaseActivity
 
                 String URL = String.format(Config.API_MESSAGES_GET, String.valueOf(user.getId()), String.valueOf(distantUser.getId()));
 
-                JSONObject json = new Requestor(URL).get();
+                final JSONObject json = new Requestor(URL).get();
                 JSONArray arrayMessages = null;
 
                 if (json != null) {

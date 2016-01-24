@@ -263,7 +263,7 @@ public class MainActivity extends RUVBaseActivity
 
                 try{
                     String URL = String.format(Config.API_USER_GET_ALL_EXCEPT_ME, String.valueOf(user.getId()));
-                    JSONObject json = new Requestor(URL).get();
+                    final JSONObject json = new Requestor(URL).get();
                     JSONArray userArray = null;
                     if (json != null) {
                         if (!json.isNull("data")) {
@@ -314,7 +314,7 @@ public class MainActivity extends RUVBaseActivity
                     ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
                     params.add(new BasicNameValuePair("token", Config.SECRET_TOKEN));
 
-                    final JSONObject json = new Requestor(URL).post(params);
+                    new Requestor(URL).post(params);
                 }
                 catch(Exception ex) {
                     Log.d(TAG, "Fail : " + ex.getMessage());
@@ -396,7 +396,7 @@ public class MainActivity extends RUVBaseActivity
             try{
                 String URL = String.format(Config.API_CONVERSATIONS_GET, String.valueOf(user.getId()));
 
-                JSONObject json = new Requestor(URL).get();
+                final JSONObject json = new Requestor(URL).get();
                 JSONArray conv_array = null;
                 if (json != null) {
                     if (!json.isNull("data")) {

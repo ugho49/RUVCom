@@ -8,7 +8,7 @@
     tools:context="fr.nantes.iut.ruvcom.Activities.ConversationActivity"
     tools:showIn="@layout/activity_conversation"
     android:orientation="vertical"
-    android:weightSum="30">
+    android:weightSum="50">
 
     <ListView
         android:layout_width="match_parent"
@@ -16,7 +16,7 @@
         android:id="@+id/listViewMessages"
         android:stackFromBottom="true"
         android:transcriptMode="alwaysScroll"
-        android:layout_weight="29"/>
+        android:layout_weight="49"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -41,7 +41,10 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/message"
-            android:layout_weight="2"/>
+            android:layout_weight="2"
+            android:clickable="true"
+            android:inputType="textCapSentences|textLongMessage|textAutoComplete|textAutoCorrect|text|textMultiLine"
+            android:elegantTextHeight="true" />
 
         <ImageButton
             android:layout_width="match_parent"

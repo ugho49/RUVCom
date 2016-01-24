@@ -30,6 +30,7 @@
         android:layout_marginRight="5dp"
         android:id="@+id/item_message_right_avatar"
         app:siArrowPosition="left"
+        app:siTriangleHeight="5dp"
         android:layout_weight="2"
         app:siSquare="true"/>
 

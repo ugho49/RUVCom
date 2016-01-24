@@ -207,7 +207,6 @@ public class SignInActivity extends RUVBaseActivity implements
         if (result.isSuccess()) {
             // Signed in successfully, show authenticated UI.
             mGoogleSignInAccount = result.getSignInAccount();
-            setSigninButtonHidden(true);
             //Person person = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
             Log.d(TAG, mGoogleSignInAccount.zzmI());
 
@@ -276,7 +275,7 @@ public class SignInActivity extends RUVBaseActivity implements
     }
 
     private boolean checkPlayServices() {
-        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
+        final GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
         int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);
         if (resultCode != ConnectionResult.SUCCESS) {
             if (apiAvailability.isUserResolvableError(resultCode)) {
@@ -292,7 +291,7 @@ public class SignInActivity extends RUVBaseActivity implements
     }
 
     private void showSnackError(String message) {
-        Snackbar snackbar = Snackbar
+        final Snackbar snackbar = Snackbar
                 .make(layoutForSnack, message, Snackbar.LENGTH_LONG)
                 .setAction("Réessayer", new View.OnClickListener() {
                     @Override
@@ -321,6 +320,7 @@ public class SignInActivity extends RUVBaseActivity implements
 
         @Override
         protected void onPreExecute() {
+            setSigninButtonHidden(true);
             showProgressDialog();
         }
 
@@ -342,7 +342,7 @@ public class SignInActivity extends RUVBaseActivity implements
                 String imageURL      = user.getImageUrl();
                 String coverURL      = "";
 
-                JSONObject coverObj = new Requestor(URL_COVER.toString()).get();
+                final JSONObject coverObj = new Requestor(URL_COVER.toString()).get();
 
                 if (!coverObj.isNull("cover")) {
                     if (!coverObj.getJSONObject("cover").isNull("coverPhoto")) {
@@ -352,7 +352,7 @@ public class SignInActivity extends RUVBaseActivity implements
 
                 String URL_USER_EXIST = String.format(Config.API_USER_EXIST, googleID);
 
-                JSONObject resultExists = new Requestor(URL_USER_EXIST).get();
+                final JSONObject resultExists = new Requestor(URL_USER_EXIST).get();
                 Boolean error = resultExists.getBoolean("error");
 
                 String URL_UPDATE_OR_REGISTER = null;
@@ -369,7 +369,7 @@ public class SignInActivity extends RUVBaseActivity implements
                     URL_UPDATE_OR_REGISTER = String.format(Config.API_USER_UPDATE, userId, googleID, displayName, email);
                 }
 
-                JSONObject json = new Requestor(URL_UPDATE_OR_REGISTER).post(params);
+                final JSONObject json = new Requestor(URL_UPDATE_OR_REGISTER).post(params);
                 JSONObject data = null;
                 if (json != null) {
                     if (!json.isNull("data")) {
@@ -394,6 +394,7 @@ public class SignInActivity extends RUVBaseActivity implements
 
             if (result == null) {
                 showSnackError("Erreur d'authentification");
+                setSigninButtonHidden(true);
             } else {
 
                 if (checkPlayServices()) {

@@ -13,15 +13,20 @@
         android:layout_height="70dp"
         android:layout_marginLeft="5dp"
         app:siArrowPosition="right"
+        app:siTriangleHeight="5dp"
         android:layout_weight="2"
         app:siSquare="true"/>
 
-    <LinearLayout
-        android:orientation="vertical"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="8"
         android:gravity="center_vertical">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/item_message_photo_left_progressbar" />
 
         <ImageView
             android:layout_width="wrap_content"
@@ -29,6 +34,6 @@
             android:scaleType="centerCrop"
             android:paddingLeft="5dp"
             android:id="@+id/item_message_photo_left_image"  />
-    </LinearLayout>
+    </RelativeLayout>
 
 </LinearLayout>
