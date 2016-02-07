@@ -34,6 +34,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.location.LocationServices;
+import com.orhanobut.logger.Logger;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -106,9 +107,9 @@ public class SignInActivity extends RUVBaseActivity implements
                 SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
                 boolean sentToken = sharedPreferences.getBoolean(NamedPreferences.SENT_TOKEN_TO_SERVER, false);
                 if (sentToken) {
-                    Log.d(TAG, "Token retrieved and sent to server! You can now use gcmsender to send downstream messages to this app.");
+                    Logger.t(TAG).d("Token retrieved and sent to server! You can now use gcmsender to send downstream messages to this app.");
                 } else {
-                    Log.e(TAG, "An error occurred while either fetching the InstanceID token,\n" +
+                    Logger.t(TAG).d("An error occurred while either fetching the InstanceID token,\n" +
                             "sending the fetched token to the server or subscribing to the PubSub topic. Please try\n" +
                             "running the sample again.");
                 }
@@ -150,7 +151,7 @@ public class SignInActivity extends RUVBaseActivity implements
         if (opr.isDone()) {
             // If the user's cached credentials are valid, the OptionalPendingResult will be "done"
             // and the GoogleSignInResult will be available instantly.
-            Log.d(TAG, "Got cached sign-in");
+            Logger.t(TAG).d("Got cached sign-in");
             GoogleSignInResult result = opr.get();
             handleSignInResult(result);
         } else {
@@ -203,13 +204,10 @@ public class SignInActivity extends RUVBaseActivity implements
     }
 
     private void handleSignInResult(GoogleSignInResult result) {
-        Log.d(TAG, "handleSignInResult:" + result.isSuccess());
+        Logger.t(TAG).d("handleSignInResult:" + result.isSuccess());
         if (result.isSuccess()) {
             // Signed in successfully, show authenticated UI.
             mGoogleSignInAccount = result.getSignInAccount();
-            //Person person = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
-            Log.d(TAG, mGoogleSignInAccount.zzmI());
-
             User user = new User();
             user.setGoogleId(mGoogleSignInAccount.getId());
             user.setEmail(mGoogleSignInAccount.getEmail().toString());
@@ -238,7 +236,7 @@ public class SignInActivity extends RUVBaseActivity implements
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        Log.d(TAG, "onConnectionFailed:" + connectionResult);
+        Logger.t(TAG).d("onConnectionFailed:" + connectionResult);
     }
 
     private void showProgressDialog() {
@@ -282,7 +280,7 @@ public class SignInActivity extends RUVBaseActivity implements
                 apiAvailability.getErrorDialog(this, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST)
                         .show();
             } else {
-                Log.i(TAG, "This device is not supported.");
+                Logger.t(TAG).i("This device is not supported.");
                 finish();
             }
             return false;
@@ -380,7 +378,7 @@ public class SignInActivity extends RUVBaseActivity implements
                 result = new User(data);
             }
             catch(Exception ex) {
-                Log.d(TAG, "Fail : " + ex.getMessage());
+                Logger.e(ex, "message");
             }
 
             return result;
@@ -394,7 +392,7 @@ public class SignInActivity extends RUVBaseActivity implements
 
             if (result == null) {
                 showSnackError("Erreur d'authentification");
-                setSigninButtonHidden(true);
+                setSigninButtonHidden(false);
             } else {
 
                 if (checkPlayServices()) {

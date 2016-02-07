@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
@@ -9,10 +10,17 @@
     tools:showIn="@layout/app_bar_main">
 
 
-    <ListView
+    <!--<ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/listViewConversation"
         tools:listitem="@layout/item_conversation"
-        android:layout_alignParentEnd="false" />
+        android:layout_alignParentEnd="false" />-->
+
+    <com.jensdriller.libs.multistatelistview.MultiStateListView
+        android:id="@+id/listViewConversation"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentEnd="false"
+        tools:listitem="@layout/item_conversation" />
 </RelativeLayout>

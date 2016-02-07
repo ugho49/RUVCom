@@ -30,7 +30,9 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.jensdriller.libs.multistatelistview.MultiStateListView;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.orhanobut.logger.Logger;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -69,7 +71,7 @@ public class MainActivity extends RUVBaseActivity
     private TextView navEmail;
     private ImageView navBackground;
 
-    public static ListView convListView;
+    public static MultiStateListView convListView;
 
     private GoogleApiClient mGoogleApiClient;
     private ImageLoader imageLoader;
@@ -101,7 +103,7 @@ public class MainActivity extends RUVBaseActivity
         fab = (FloatingActionButton) findViewById(R.id.fab);
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         navigationView = (NavigationView) findViewById(R.id.nav_view);
-        convListView = (ListView) findViewById(R.id.listViewConversation);
+        convListView = (MultiStateListView) findViewById(R.id.listViewConversation);
 
         View navigationHeaderView = navigationView.getHeaderView(0);
         navAvatar = (CircularImageView) navigationHeaderView.findViewById(R.id.nav_avatar);
@@ -208,7 +210,10 @@ public class MainActivity extends RUVBaseActivity
         if (id == R.id.signout) {
             signOut();
         } else if (id == R.id.action_settings) {
-            Toast.makeText(getApplicationContext(), "Click sur settings", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(), "Click sur settings", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(getBaseContext(), SettingsActivity.class));
+
+            overridePendingTransition(R.anim.in_right_to_left, R.anim.out_right_to_left);
         }
 
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -227,7 +232,7 @@ public class MainActivity extends RUVBaseActivity
                         new ResultCallback<Status>() {
                             @Override
                             public void onResult(Status status) {
-                                Log.d(TAG, "signOut status : " + status.getStatusCode() + " - " + status.getStatusMessage());
+                                Logger.t(TAG).d("signOut status : " + status.getStatusCode() + " - " + status.getStatusMessage());
 
                                 Toast.makeText(getApplicationContext(), "Déconnexion réussie", Toast.LENGTH_SHORT).show();
                                 deleteGCMOnBase();
@@ -282,7 +287,7 @@ public class MainActivity extends RUVBaseActivity
                     }
                 }
                 catch(Exception ex) {
-                    Log.d(TAG, "Fail : " + ex.getMessage());
+                    Logger.e(ex, "message");
                 }
 
                 return result;
@@ -317,7 +322,7 @@ public class MainActivity extends RUVBaseActivity
                     new Requestor(URL).post(params);
                 }
                 catch(Exception ex) {
-                    Log.d(TAG, "Fail : " + ex.getMessage());
+                    Logger.e(ex, "message");
                 }
 
                 return null;
@@ -359,7 +364,7 @@ public class MainActivity extends RUVBaseActivity
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        Log.d(TAG, "onConnectionFailed:" + connectionResult);
+        Logger.t(TAG).d("onConnectionFailed:" + connectionResult);
     }
 
     public static void loadListView(List<Conversation> conversationList) {
@@ -415,7 +420,7 @@ public class MainActivity extends RUVBaseActivity
                 }
             }
             catch(Exception ex) {
-                Log.d(TAG, "Fail : " + ex.getMessage());
+                Logger.e(ex, "message");
             }
 
             return result;

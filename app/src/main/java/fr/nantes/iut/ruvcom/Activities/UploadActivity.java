@@ -13,6 +13,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.orhanobut.logger.Logger;
+
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.json.JSONException;
@@ -150,9 +152,9 @@ public class UploadActivity extends RUVBaseActivity {
                 }
 
             } catch (IOException e) {
-               Log.e("UploadPicture", e.getMessage());
+                Logger.e(e, "message");
             } catch (JSONException e) {
-                Log.e("UploadPicture", e.getMessage());
+                Logger.e(e, "message");
             }
 
             return result;
@@ -172,7 +174,7 @@ public class UploadActivity extends RUVBaseActivity {
                     }
                 }
             } catch (Exception e) {
-                Log.e("tag", e.getMessage());
+                Logger.e(e, "message");
             }
 
             if(result == null) {

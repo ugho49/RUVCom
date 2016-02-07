@@ -38,10 +38,11 @@ dependencies {
     // App compat
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:design:23.1.1'
+    compile 'com.android.support:support-v4:23.1.1'
     // Other
-    //compile 'com.jakewharton:butterknife:7.0.1'
-    compile 'com.google.code.gson:gson:2.5'
     compile 'org.apache.httpcomponents:httpmime:4.0'
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
     compile 'com.github.siyamed:android-shape-imageview:0.9.3'
+    compile 'com.github.orhanobut:logger:1.12'
+    compile 'com.github.jenzz.multistatelistview:library:1.0'
 }

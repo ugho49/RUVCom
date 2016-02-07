@@ -9,6 +9,7 @@ import android.util.Log;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.orhanobut.logger.Logger;
 
 /**
  * Created by ughostephan on 19/01/2016.
@@ -22,6 +23,7 @@ public class RUVComApplication extends Application implements Application.Activi
     public void onCreate() {
         super.onCreate();
 
+        Logger.init();
         initImageLoader(getApplicationContext());
         registerActivityLifecycleCallbacks(this);
     }

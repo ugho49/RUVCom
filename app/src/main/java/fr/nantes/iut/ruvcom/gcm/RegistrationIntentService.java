@@ -11,6 +11,7 @@ import android.util.Log;
 import com.google.android.gms.gcm.GcmPubSub;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
+import com.orhanobut.logger.Logger;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -58,7 +59,7 @@ public class RegistrationIntentService extends IntentService {
             String token = instanceID.getToken(String.valueOf(Config.SENDER_ID),
                     GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
 
-            Log.i(TAG, "GCM Registration Token: " + token);
+            Logger.t(TAG).i("GCM Registration Token: " + token);
 
             sendRegistrationToServer(token);
 
@@ -71,7 +72,8 @@ public class RegistrationIntentService extends IntentService {
             sharedPreferences.edit().putBoolean(NamedPreferences.SENT_TOKEN_TO_SERVER, true).apply();
             // [END register_for_gcm]
         } catch (Exception e) {
-            Log.d(TAG, "Failed to complete token refresh", e);
+            //Log.d(TAG, "Failed to complete token refresh", e);
+            Logger.e(e, "Failed to complete token refresh ");
             // If an exception happens while fetching the new token or updating our registration data
             // on a third-party server, this ensures that we'll attempt the update at a later time.
             sharedPreferences.edit().putBoolean(NamedPreferences.SENT_TOKEN_TO_SERVER, false).apply();
@@ -108,7 +110,8 @@ public class RegistrationIntentService extends IntentService {
                     final JSONObject json = new Requestor(URL).post(params);
                 }
                 catch(Exception ex) {
-                    Log.d(TAG, "Fail : " + ex.getMessage());
+                    //Log.d(TAG, "Fail : " + ex.getMessage());
+                    Logger.e(ex, "message");
                 }
 
                 return null;

@@ -1,17 +1,22 @@
 package fr.nantes.iut.ruvcom.gcm;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.gcm.GcmListenerService;
+import com.orhanobut.logger.Logger;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,6 +42,8 @@ public class RUVGcmListenerService extends GcmListenerService {
 
     private static final String TAG = "MyGcmListenerService";
 
+    private SharedPreferences preferences;
+
     /**
      * Called when message is received.
      *
@@ -47,6 +54,7 @@ public class RUVGcmListenerService extends GcmListenerService {
     @Override
     public void onMessageReceived(String from, Bundle data) {
         Message message = new Message();
+        preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
         message.setId(data.getInt("id"));
         message.setMessage(data.getString("message"));
@@ -75,10 +83,11 @@ public class RUVGcmListenerService extends GcmListenerService {
             }
         }
         catch (JSONException e) {
-            Log.e(TAG, e.getMessage());
+            //Log.e(TAG, e.getMessage());
+            Logger.e(e, "message");
         }
 
-        Log.d(TAG, "Notification Content " + message.getMessage());
+        Logger.t(TAG).i("Notification Content " + message.getMessage());
 
         if(RUVComApplication.applicationOnPause) {
             sendNotification(distantUser, message, photo, false);
@@ -133,18 +142,31 @@ public class RUVGcmListenerService extends GcmListenerService {
         }
 
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
+        String sound = preferences.getString(NamedPreferences.NOTIFICATION_RINGTONE, defaultSoundUri.toString());
+        Uri soundUri = Uri.parse(sound);
+
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this);
+
+        if (!preferences.getBoolean(NamedPreferences.NOTIFICATION_VIBRATE_ENABLE, true)) {
+            // Disable vibrate
+            notificationBuilder.setVibrate(new long[]{0l});
+        }
+
+        notificationBuilder
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(title)
                 .setContentText(content)
                 .setAutoCancel(true)
-                .setSound(defaultSoundUri)
+                .setLights(Color.BLUE, 3000, 3000)
+                .setSound(soundUri)
                 .setContentIntent(pendingIntent);
 
-        NotificationManager notificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        notificationManager.notify(0, notificationBuilder.build());
+        if (preferences.getBoolean(NamedPreferences.NOTIFICATION_ENABLE, true)) {
+            // Display notification only if user want it
+            notificationManager.notify(0, notificationBuilder.build());
+        }
     }
 
 }

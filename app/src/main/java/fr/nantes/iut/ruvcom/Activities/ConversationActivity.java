@@ -19,6 +19,9 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.jensdriller.libs.multistatelistview.MultiStateListView;
+import com.orhanobut.logger.Logger;
+
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
@@ -38,8 +41,7 @@ import fr.nantes.iut.ruvcom.R;
 import fr.nantes.iut.ruvcom.Utils.Config;
 import fr.nantes.iut.ruvcom.Utils.Requestor;
 
-public class ConversationActivity extends RUVBaseActivity
-        implements View.OnClickListener {
+public class ConversationActivity extends RUVBaseActivity implements View.OnClickListener {
 
     // Camera activity request codes
     private static final int CAMERA_CAPTURE_IMAGE_REQUEST_CODE = 100;
@@ -57,7 +59,7 @@ public class ConversationActivity extends RUVBaseActivity
     private EditText editTextMessage;
 
     public static ListViewMessagesAdapter adapter;
-    public static ListView messageListView;
+    public static MultiStateListView messageListView;
 
     private Uri fileUri; // file url to store image/video
 
@@ -81,7 +83,7 @@ public class ConversationActivity extends RUVBaseActivity
         ImageButton sendButton = (ImageButton) findViewById(R.id.sendButton);
         ImageButton btnCapturePicture = (ImageButton) findViewById(R.id.cameraButton);
         editTextMessage = (EditText) findViewById(R.id.message);
-        messageListView = (ListView) findViewById(R.id.listViewMessages);
+        messageListView = (MultiStateListView) findViewById(R.id.listViewMessages);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
         sendButton.setOnClickListener(this);
@@ -129,7 +131,8 @@ public class ConversationActivity extends RUVBaseActivity
         switch (v.getId()) {
             case R.id.sendButton:
                 if(!"".equals(editTextMessage.getText().toString())) {
-                    new sendMessageTask(editTextMessage.getText().toString()).execute();
+                    String m = editTextMessage.getText().toString();
+                    new sendMessageTask(m).execute();
                 }
                 break;
             case R.id.cameraButton:
@@ -155,7 +158,7 @@ public class ConversationActivity extends RUVBaseActivity
             } else if (resultCode == RESULT_CANCELED) {
 
                 // user cancelled Image capture
-                Log.d(TAG, "User cancelled image capture");
+                Logger.t(TAG).d("User cancelled image capture");
 
             } else {
                 // failed to capture image
@@ -219,7 +222,7 @@ public class ConversationActivity extends RUVBaseActivity
         // Create the storage directory if it does not exist
         if (!mediaStorageDir.exists()) {
             if (!mediaStorageDir.mkdirs()) {
-                Log.d(TAG, "Oops! Failed create "
+                Logger.t(TAG).d(TAG, "Oops! Failed create "
                         + Config.LOCAL_IMAGE_DIRECTORY_NAME + " directory");
                 return null;
             }
@@ -338,7 +341,7 @@ public class ConversationActivity extends RUVBaseActivity
                 }
             }
             catch(Exception ex) {
-                Log.d("CONV ACTIVITY", "Fail : " + ex.getMessage());
+                Logger.e(ex, "message");
             }
 
             return error;
@@ -392,7 +395,7 @@ public class ConversationActivity extends RUVBaseActivity
                 }
             }
             catch(Exception ex) {
-                Log.d("CONV ACTIVITY", "Fail : " + ex.getMessage());
+                Logger.e(ex, "message");
             }
 
             return null;

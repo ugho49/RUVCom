@@ -2,6 +2,8 @@ package fr.nantes.iut.ruvcom.Utils;
 
 import android.util.Log;
 
+import com.orhanobut.logger.Logger;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
@@ -44,9 +46,11 @@ public class Requestor {
 
             response = returnResponse(httpclient.execute(httppost));
         } catch (UnsupportedEncodingException e) {
-            Log.e("Requestor_HTTPPOST", e.getMessage());
+            //Log.e("Requestor_HTTPPOST", e.getMessage());
+            Logger.e(e, "message");
         } catch (IOException e) {
-            Log.e("Requestor_HTTPPOST", e.getMessage());
+            //Log.e("Requestor_HTTPPOST", e.getMessage());
+            Logger.e(e, "message");
         }
 
         return response;
@@ -64,9 +68,11 @@ public class Requestor {
 
             response = returnResponse(httpclient.execute(httppost));
         } catch (UnsupportedEncodingException e) {
-            Log.e("Requestor_HTTPPOST", e.getMessage());
+            //Log.e("Requestor_HTTPPOST", e.getMessage());
+            Logger.e(e, "message");
         } catch (IOException e) {
-            Log.e("Requestor_HTTPPOST", e.getMessage());
+            //Log.e("Requestor_HTTPPOST", e.getMessage());
+            Logger.e(e, "message");
         }
 
         return response;
@@ -80,7 +86,8 @@ public class Requestor {
         try {
             response = returnResponse(httpclient.execute(httpget));
         } catch (IOException e) {
-            Log.e("Requestor_HTTPGET", e.getMessage());
+            //Log.e("Requestor_HTTPGET", e.getMessage());
+            Logger.e(e, "message");
         }
 
         return response;
@@ -93,9 +100,11 @@ public class Requestor {
             String result = EntityUtils.toString(httpResponse.getEntity());
             jsonresult = new JSONObject(result);
         } catch (JSONException e) {
-            Log.e("Requestor_Response", e.getMessage());
+            //Log.e("Requestor_Response", e.getMessage());
+            Logger.e(e, "message");
         } catch (IOException e) {
-            Log.e("Requestor_Response", e.getMessage());
+            //Log.e("Requestor_Response", e.getMessage());
+            Logger.e(e, "message");
         }
 
         return jsonresult;
