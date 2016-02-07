@@ -13,7 +13,7 @@ public class Config {
     // SENDER ID
     public static final String SENDER_ID = "658363483971";
     // Url de base de L'API
-    public static final String BASE_API_URL = "http://dev.ugho-stephan.fr/api/";
+    public static final String BASE_API_URL = "https://dev.ugho-stephan.fr/api/";
     // PARAM : googleID
     public static final String API_USER_EXIST = BASE_API_URL + "userExists/%s";
     // PARAM : userID
