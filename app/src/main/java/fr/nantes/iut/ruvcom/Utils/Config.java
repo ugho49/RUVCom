@@ -14,6 +14,8 @@ public class Config {
     public static final String SENDER_ID = "658363483971";
     // Url de base de L'API
     public static final String BASE_API_URL = "https://dev.ugho-stephan.fr/api/";
+    // Url pour télécharger la dernière version de l'application
+    public static final String URL_DOWNLOAD_LAST_APK = "https://dev.ugho-stephan.fr/apk/app.apk";
     // PARAM : googleID
     public static final String API_USER_EXIST = BASE_API_URL + "userExists/%s";
     // PARAM : userID

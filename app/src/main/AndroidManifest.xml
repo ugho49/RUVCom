@@ -57,6 +57,10 @@
             android:name=".Activities.FullScreenImageActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Activities.SettingsActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/action_settings" />
 
         <receiver
             android:name="com.google.android.gms.gcm.GcmReceiver"
@@ -85,11 +89,7 @@
         </service>
         <service
             android:name=".gcm.RegistrationIntentService"
-            android:exported="false"></service>
-
-        <activity
-            android:name=".Activities.SettingsActivity"
-            android:label="@string/title_activity_settings"></activity>
+            android:exported="false" />
     </application>
 
 </manifest>
