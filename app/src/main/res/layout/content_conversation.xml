@@ -51,16 +51,14 @@
             android:layout_height="match_parent"
             android:id="@+id/message"
             android:layout_weight="2"
-            android:clickable="true"
-            android:inputType="textCapSentences|textLongMessage|textAutoComplete|textAutoCorrect|text|textMultiLine"
-            android:elegantTextHeight="true" />
+            android:clickable="true" />
 
         <ImageButton
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:padding="8dp"
             android:id="@+id/sendButton"
-            android:src="@drawable/ic_send_black_24dp"
+            android:src="@drawable/ic_menu_send"
             android:scaleType="fitCenter"
             android:background="@null"
             android:layout_weight="6" />
