@@ -1,15 +1,17 @@
 package fr.nantes.iut.ruvcom.Activities;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.github.danielnilsson9.colorpickerview.dialog.ColorPickerDialogFragment;
 import com.github.danielnilsson9.colorpickerview.preference.ColorPreference;
@@ -33,6 +35,9 @@ public class SettingsActivity extends RUVBaseActivity
         implements ColorPickerDialogFragment.ColorPickerDialogListener,
         ColorPickerView.OnColorChangedListener{
 
+    private SettingsFragment settingsFragment;
+    private SharedPreferences preferences;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,10 +46,14 @@ public class SettingsActivity extends RUVBaseActivity
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
+        settingsFragment = new SettingsFragment();
+
         // Display the fragment as the main content.
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
-                    .replace(R.id.settingsFragment, new SettingsFragment())
+                    .replace(R.id.settingsFragment, settingsFragment)
                     .commit();
         }
 
@@ -69,12 +78,14 @@ public class SettingsActivity extends RUVBaseActivity
         return super.onOptionsItemSelected(item);
     }
 
-    public static class SettingsFragment extends PreferenceFragment {
+    @SuppressLint("ValidFragment")
+    public class SettingsFragment extends PreferenceFragment {
 
-        private Preference prefCache;
-        private Preference prefVersion;
-        private Preference prefDownloadLastApk;
-        private ColorPreference prefGeneralColor;
+        public Preference prefCache;
+        public Preference prefVersion;
+        public Preference prefResetColor;
+        public Preference prefDownloadLastApk;
+        public ColorPreference prefGeneralColor;
 
         public SettingsFragment() {}
 
@@ -94,9 +105,12 @@ public class SettingsActivity extends RUVBaseActivity
 
             prefCache = findPreference(getString(R.string.pref_cache));
             prefVersion = findPreference(getString(R.string.pref_version));
+            prefResetColor = findPreference(getString(R.string.pref_reset_color));
             prefDownloadLastApk = findPreference(getString(R.string.pref_download_last_apk));
             prefGeneralColor = (ColorPreference) findPreference(NamedPreferences.GENERAL_COLOR);
 
+            int savedColor = preferences.getInt(NamedPreferences.GENERAL_COLOR, baseColor);
+            prefGeneralColor.saveValue(savedColor);
             prefVersion.setSummary(versionName);
             prefCache.setSummary(getCache());
 
@@ -117,6 +131,16 @@ public class SettingsActivity extends RUVBaseActivity
                     return false;
                 }
             });
+
+            prefResetColor.setOnPreferenceClickListener((new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference p) {
+                    prefGeneralColor.saveValue(baseColor);
+                    applyColor();
+
+                    return false;
+                }
+            }));
 
             prefGeneralColor.setOnShowDialogListener(new ColorPreference.OnShowDialogListener() {
 
@@ -179,7 +203,11 @@ public class SettingsActivity extends RUVBaseActivity
 
     @Override
     public void onColorSelected(int dialogId, int color) {
-        Toast.makeText(SettingsActivity.this, "Selected Color: " + RUVComUtils.colorToHexString(color), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(SettingsActivity.this, "Selected Color: " + RUVComUtils.colorToHexString(color), Toast.LENGTH_SHORT).show();
+        settingsFragment.prefGeneralColor.saveValue(color);
+
+        // Apply the new color
+        applyColor();
     }
 
     @Override
@@ -189,6 +217,6 @@ public class SettingsActivity extends RUVBaseActivity
 
     @Override
     public void onColorChanged(int newColor) {
-        Toast.makeText(SettingsActivity.this, "Changed Color: " + RUVComUtils.colorToHexString(newColor), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(SettingsActivity.this, "Changed Color: " + RUVComUtils.colorToHexString(newColor), Toast.LENGTH_SHORT).show();
     }
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:custom="http://schemas.android.com/apk/res-auto"
@@ -10,14 +10,6 @@
     tools:showIn="@layout/activity_conversation"
     android:orientation="vertical"
     android:weightSum="50">
-
-    <!--<ListView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/listViewMessages"
-        android:stackFromBottom="true"
-        android:transcriptMode="alwaysScroll"
-        android:layout_weight="49"/>-->
 
     <com.jensdriller.libs.multistatelistview.MultiStateListView
         android:id="@+id/listViewMessages"
@@ -63,4 +55,59 @@
             android:background="@null"
             android:layout_weight="6" />
     </LinearLayout>
-</LinearLayout>
+</LinearLayout>-->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="fr.nantes.iut.ruvcom.Activities.ConversationActivity"
+    tools:showIn="@layout/activity_conversation">
+
+    <com.jensdriller.libs.multistatelistview.MultiStateListView
+        android:id="@+id/listViewMessages"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:stackFromBottom="true"
+        android:layout_marginBottom="60dp"
+        android:transcriptMode="alwaysScroll" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:weightSum="14"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <ImageButton
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:padding="8dp"
+            android:id="@+id/cameraButton"
+            android:background="@null"
+            android:src="@drawable/ic_menu_camera"
+            android:scaleType="fitCenter"
+            android:layout_weight="6" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/message"
+            android:layout_weight="2"
+            android:background="@null"
+            android:clickable="true" />
+
+        <ImageButton
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:padding="8dp"
+            android:id="@+id/sendButton"
+            android:src="@drawable/ic_menu_send"
+            android:scaleType="fitCenter"
+            android:background="@null"
+            android:layout_weight="6" />
+    </LinearLayout>
+
+</RelativeLayout>

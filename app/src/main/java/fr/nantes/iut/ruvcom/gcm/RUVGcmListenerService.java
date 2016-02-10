@@ -1,6 +1,5 @@
 package fr.nantes.iut.ruvcom.gcm;
 
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -12,8 +11,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.gcm.GcmListenerService;
 import com.orhanobut.logger.Logger;
@@ -21,12 +18,8 @@ import com.orhanobut.logger.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Date;
-
 import fr.nantes.iut.ruvcom.Activities.ConversationActivity;
 import fr.nantes.iut.ruvcom.Activities.MainActivity;
-import fr.nantes.iut.ruvcom.Activities.RUVBaseActivity;
-import fr.nantes.iut.ruvcom.Bean.Conversation;
 import fr.nantes.iut.ruvcom.Bean.Message;
 import fr.nantes.iut.ruvcom.Bean.Photo;
 import fr.nantes.iut.ruvcom.Bean.User;

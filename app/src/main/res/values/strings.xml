@@ -34,15 +34,17 @@
     <string name="pref_header_customisation">Customisation</string>
 
     <string name="pref_title_cache">Vider le cache</string>
-    <string name="pref_title_last_apk">Télécharger la dernière version de l\'application</string>
+    <string name="pref_title_last_apk">Télécharger la dernière version</string>
     <string name="pref_title_version">Version</string>
 
     <string name="pref_cache">pref_cache</string>
     <string name="pref_download_last_apk">pref_last_apk</string>
     <string name="pref_version">pref_version</string>
+    <string name="pref_reset_color">pref_reset_color</string>
 
     <string name="pref_title_customisation">Changer la couleur</string>
     <string name="pref_title_customisation_dialog">Choisir une couleur</string>
+    <string name="pref_title_color_default">Remettre la couleur par default</string>
     <string name="pref_summary_customisation">Choisissez une couleur pour l\'application</string>
 
     <string name="pref_title_new_message_notifications">Recevoir des notifications</string>

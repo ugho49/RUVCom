@@ -1,7 +1,11 @@
 package fr.nantes.iut.ruvcom.Activities;
 
+import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -9,6 +13,8 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import fr.nantes.iut.ruvcom.R;
+import fr.nantes.iut.ruvcom.RUVComApplication;
+import fr.nantes.iut.ruvcom.Utils.NamedPreferences;
 import fr.nantes.iut.ruvcom.Utils.RUVComUtils;
 
 /**
@@ -19,11 +25,21 @@ public abstract class RUVBaseActivity extends AppCompatActivity {
     protected Window window;
     protected Toolbar toolbar;
     protected FloatingActionButton fab;
+    protected final static int baseColor = Color.parseColor("#37474F");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         window = getWindow();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if(!SignInActivity.class.getSimpleName().equals(RUVComApplication.activityRunningName)) {
+            applyColor();
+        }
     }
 
     private void applyTheme(int color) {
@@ -32,7 +48,7 @@ public abstract class RUVBaseActivity extends AppCompatActivity {
         }
 
         if (fab != null) {
-            fab.setBackgroundColor(color);
+            fab.setBackgroundTintList(ColorStateList.valueOf(color));
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -46,7 +62,8 @@ public abstract class RUVBaseActivity extends AppCompatActivity {
     }
 
     protected void applyColor() {
-        applyTheme(RUVComUtils.hexStringToColor("#36648b"));
+        final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        applyTheme(preferences.getInt(NamedPreferences.GENERAL_COLOR, baseColor));
     }
 
     protected void applyColorActivitySignIn() {

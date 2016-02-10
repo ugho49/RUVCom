@@ -30,10 +30,14 @@
     <PreferenceCategory android:title="@string/pref_header_customisation">
 
         <com.github.danielnilsson9.colorpickerview.preference.ColorPreference
-            android:defaultValue="@color/primary"
             android:key="pref_general_color"
             android:summary="@string/pref_summary_customisation"
             android:title="@string/pref_title_customisation" />
+
+        <Preference
+            android:key="@string/pref_reset_color"
+            android:title="@string/pref_title_color_default"
+            android:summary=""/>
 
     </PreferenceCategory>
 

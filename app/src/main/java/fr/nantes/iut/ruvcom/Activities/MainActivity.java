@@ -97,7 +97,6 @@ public class MainActivity extends RUVBaseActivity
         navEmail = (TextView) navigationHeaderView.findViewById(R.id.nav_email);
         navBackground = (ImageView) navigationHeaderView.findViewById(R.id.nav_background);
 
-
         applicationContext = this;
         user = (User) getIntent().getSerializableExtra("user");
         imageLoader = ImageLoader.getInstance();
