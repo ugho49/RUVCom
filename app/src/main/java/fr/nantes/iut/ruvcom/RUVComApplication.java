@@ -3,9 +3,11 @@ package fr.nantes.iut.ruvcom;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -18,6 +20,8 @@ public class RUVComApplication extends Application implements Application.Activi
 
     public static boolean applicationOnPause = true;
     public static String activityRunningName = "";
+    public static Location mLastLocation;
+    public static GoogleApiClient mGoogleApiClient;
 
     @Override
     public void onCreate() {

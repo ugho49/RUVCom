@@ -10,13 +10,11 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.jensdriller.libs.multistatelistview.MultiStateListView;
@@ -71,20 +69,19 @@ public class ConversationActivity extends RUVBaseActivity implements View.OnClic
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        context = getApplicationContext();
-
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         setContentView(R.layout.activity_conversation);
-
-        user = (User) getIntent().getSerializableExtra("user");
-        distantUser = (User) getIntent().getSerializableExtra("distantUser");
 
         ImageButton sendButton = (ImageButton) findViewById(R.id.sendButton);
         ImageButton btnCapturePicture = (ImageButton) findViewById(R.id.cameraButton);
         editTextMessage = (EditText) findViewById(R.id.message);
         messageListView = (MultiStateListView) findViewById(R.id.listViewMessages);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        context = getApplicationContext();
+
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+
+        user = (User) getIntent().getSerializableExtra("user");
+        distantUser = (User) getIntent().getSerializableExtra("distantUser");
 
         sendButton.setOnClickListener(this);
         editTextMessage.setHint("Message à " + distantUser.getDisplayName());
@@ -105,6 +102,8 @@ public class ConversationActivity extends RUVBaseActivity implements View.OnClic
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         notificationManager.cancelAll();
+
+        applyColor();
 
         new getMessagesTask().execute();
     }

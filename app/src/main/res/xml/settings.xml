@@ -1,7 +1,6 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory
-        android:title="@string/pref_header_notifications">
+    <PreferenceCategory android:title="@string/pref_header_notifications">
         <!-- A 'parent' preference, which enables/disables child preferences (below)
              when checked/unchecked. -->
         <SwitchPreference
@@ -27,8 +26,18 @@
             android:title="@string/pref_title_vibrate" />
     </PreferenceCategory>
 
-    <PreferenceCategory
-        android:title="@string/pref_header_advance">
+
+    <PreferenceCategory android:title="@string/pref_header_customisation">
+
+        <com.github.danielnilsson9.colorpickerview.preference.ColorPreference
+            android:defaultValue="@color/primary"
+            android:key="pref_general_color"
+            android:summary="@string/pref_summary_customisation"
+            android:title="@string/pref_title_customisation" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref_header_advance">
 
         <Preference
             android:key="@string/pref_cache"
@@ -42,8 +51,7 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory
-        android:title="@string/pref_header_informations">
+    <PreferenceCategory android:title="@string/pref_header_informations">
 
         <Preference
             android:key="@string/pref_version"

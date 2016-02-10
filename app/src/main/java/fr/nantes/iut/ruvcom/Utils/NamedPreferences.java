@@ -10,4 +10,5 @@ public class NamedPreferences {
     public static final String NOTIFICATION_ENABLE = "notifications_new_message";
     public static final String NOTIFICATION_RINGTONE = "notifications_new_message_ringtone";
     public static final String NOTIFICATION_VIBRATE_ENABLE = "notifications_new_message_vibrate";
+    public static final String GENERAL_COLOR = "pref_general_color";
 }

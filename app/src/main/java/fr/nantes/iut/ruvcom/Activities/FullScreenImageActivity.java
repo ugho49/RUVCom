@@ -2,14 +2,13 @@ package fr.nantes.iut.ruvcom.Activities;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.widget.ImageView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import fr.nantes.iut.ruvcom.R;
 
-public class FullScreenImageActivity extends RUVBaseActivity {
+public class FullScreenImageActivity extends AppCompatActivity {
 
     private final ImageLoader imageLoader = ImageLoader.getInstance();
 

@@ -6,7 +6,6 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -26,6 +25,7 @@ import java.io.IOException;
 import fr.nantes.iut.ruvcom.Bean.Message;
 import fr.nantes.iut.ruvcom.Bean.User;
 import fr.nantes.iut.ruvcom.R;
+import fr.nantes.iut.ruvcom.RUVComApplication;
 import fr.nantes.iut.ruvcom.Utils.AndroidMultiPartEntity;
 import fr.nantes.iut.ruvcom.Utils.Config;
 import fr.nantes.iut.ruvcom.Utils.Requestor;
@@ -46,9 +46,7 @@ public class UploadActivity extends RUVBaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         txtPercentage = (TextView) findViewById(R.id.txtPercentageUpload);
         progressBar = (ProgressBar) findViewById(R.id.progressBarUpload);
         imgPreview = (ImageView) findViewById(R.id.imgPreviewUpload);
@@ -59,6 +57,8 @@ public class UploadActivity extends RUVBaseActivity {
         user = (User) intent.getSerializableExtra("user");
         distantUser = (User) intent.getSerializableExtra("distantUser");
 
+        setSupportActionBar(toolbar);
+
         if (filePath != null) {
             // Displaying the image or video on the screen
             previewMedia();
@@ -67,6 +67,8 @@ public class UploadActivity extends RUVBaseActivity {
             Toast.makeText(getApplicationContext(), "Impossible de capturer la photo", Toast.LENGTH_LONG).show();
             finish();
         }
+
+        applyColor();
     }
 
     @Override
@@ -120,9 +122,9 @@ public class UploadActivity extends RUVBaseActivity {
 
             try {
                 String URL;
-                if (mLastLocation != null) {
-                    String geoLat = String.valueOf(mLastLocation.getLatitude());
-                    String geoLong = String.valueOf(mLastLocation.getLongitude());
+                if (RUVComApplication.mLastLocation != null) {
+                    String geoLat = String.valueOf(RUVComApplication.mLastLocation.getLatitude());
+                    String geoLong = String.valueOf(RUVComApplication.mLastLocation.getLongitude());
                     URL = String.format(Config.API_UPLOAD_PICTURE_GEO, String.valueOf(user.getId()), String.valueOf(distantUser.getId()), geoLat, geoLong);
                 } else {
                     URL = String.format(Config.API_UPLOAD_PICTURE, String.valueOf(user.getId()), String.valueOf(distantUser.getId()));

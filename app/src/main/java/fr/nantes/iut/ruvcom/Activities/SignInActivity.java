@@ -1,7 +1,6 @@
 package fr.nantes.iut.ruvcom.Activities;
 
 import android.Manifest;
-import android.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -18,7 +17,6 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
@@ -45,6 +43,7 @@ import java.util.ArrayList;
 
 import fr.nantes.iut.ruvcom.Bean.User;
 import fr.nantes.iut.ruvcom.R;
+import fr.nantes.iut.ruvcom.RUVComApplication;
 import fr.nantes.iut.ruvcom.Utils.Config;
 import fr.nantes.iut.ruvcom.Utils.ConnectionDetector;
 import fr.nantes.iut.ruvcom.Utils.NamedPreferences;
@@ -78,7 +77,6 @@ public class SignInActivity extends RUVBaseActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_signin);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -98,8 +96,6 @@ public class SignInActivity extends RUVBaseActivity implements
                 distantUserFromNotif = (User) getIntent().getSerializableExtra(NamedPreferences.DISTANT_USER_FROM_PUSH);
             }
         }
-
-        FragmentManager fm = getFragmentManager();
 
         mRegistrationBroadcastReceiver = new BroadcastReceiver() {
             @Override
@@ -125,7 +121,7 @@ public class SignInActivity extends RUVBaseActivity implements
 
         // Build a GoogleApiClient with access to the Google Sign-In API and the
         // options specified by gso.
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
+        RUVComApplication.mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
         .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .addApi(LocationServices.API)
@@ -141,13 +137,17 @@ public class SignInActivity extends RUVBaseActivity implements
         // difference.
         signInButton.setSize(SignInButton.SIZE_WIDE);
         signInButton.setScopes(gso.getScopeArray());
+
+        // Override preferences for colors
+        applyColorActivitySignIn();
+
     }
 
     @Override
     public void onStart() {
         super.onStart();
 
-        OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
+        OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(RUVComApplication.mGoogleApiClient);
         if (opr.isDone()) {
             // If the user's cached credentials are valid, the OptionalPendingResult will be "done"
             // and the GoogleSignInResult will be available instantly.
@@ -182,7 +182,17 @@ public class SignInActivity extends RUVBaseActivity implements
 
     @Override
     public void onConnected(Bundle connectionHint) {
-        checkLastLocalisation(this);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        RUVComApplication.mLastLocation = LocationServices.FusedLocationApi.getLastLocation(RUVComApplication.mGoogleApiClient);
     }
 
     @Override
@@ -230,7 +240,7 @@ public class SignInActivity extends RUVBaseActivity implements
     }
 
     private void signIn() {
-        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(RUVComApplication.mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 

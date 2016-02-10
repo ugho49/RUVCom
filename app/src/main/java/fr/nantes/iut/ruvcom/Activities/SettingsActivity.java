@@ -1,17 +1,19 @@
 package fr.nantes.iut.ruvcom.Activities;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
-import android.support.v7.app.ActionBar;
+import android.preference.PreferenceFragment;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.Toast;
 
+import com.github.danielnilsson9.colorpickerview.dialog.ColorPickerDialogFragment;
+import com.github.danielnilsson9.colorpickerview.preference.ColorPreference;
+import com.github.danielnilsson9.colorpickerview.view.ColorPickerView;
 import com.nostra13.universalimageloader.cache.memory.MemoryCache;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.orhanobut.logger.Logger;
@@ -21,56 +23,32 @@ import java.util.Collection;
 
 import fr.nantes.iut.ruvcom.R;
 import fr.nantes.iut.ruvcom.Utils.Config;
+import fr.nantes.iut.ruvcom.Utils.NamedPreferences;
+import fr.nantes.iut.ruvcom.Utils.RUVComUtils;
 
 /**
  * Created by ughostephan on 07/02/2016.
  */
-public class SettingsActivity extends AppCompatPreferenceActivity {
+public class SettingsActivity extends RUVBaseActivity
+        implements ColorPickerDialogFragment.ColorPickerDialogListener,
+        ColorPickerView.OnColorChangedListener{
 
-    private Preference prefCache;
-    private Preference prefVersion;
-    private Preference prefDownloadLastApk;
-
-    @SuppressWarnings("deprecation")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setupActionBar();
-        addPreferencesFromResource(R.xml.settings);
+        setContentView(R.layout.activity_settings);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        String versionName = "";
-
-        try {
-            Context c = getApplicationContext();
-            versionName = c.getPackageManager().getPackageInfo(c.getPackageName(), 0).versionName;
-        } catch (PackageManager.NameNotFoundException e) {
-            Logger.e(e, "message");
+        // Display the fragment as the main content.
+        if (savedInstanceState == null) {
+            getFragmentManager().beginTransaction()
+                    .replace(R.id.settingsFragment, new SettingsFragment())
+                    .commit();
         }
 
-        prefCache = findPreference(getString(R.string.pref_cache));
-        prefVersion = findPreference(getString(R.string.pref_version));
-        prefDownloadLastApk = findPreference(getString(R.string.pref_download_last_apk));
-
-        prefVersion.setSummary(versionName);
-        prefCache.setSummary(getCache());
-
-        prefCache.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                cleanCache();
-                return false;
-            }
-        });
-
-        prefDownloadLastApk.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse(Config.URL_DOWNLOAD_LAST_APK));
-                startActivity(i);
-                return false;
-            }
-        });
+        applyColor();
     }
 
     @Override
@@ -91,60 +69,126 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * Set up the {@link android.app.ActionBar}, if the API is available.
-     */
-    private void setupActionBar() {
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            // Show the Up button in the action bar.
-            actionBar.setDisplayHomeAsUpEnabled(true);
+    public static class SettingsFragment extends PreferenceFragment {
+
+        private Preference prefCache;
+        private Preference prefVersion;
+        private Preference prefDownloadLastApk;
+        private ColorPreference prefGeneralColor;
+
+        public SettingsFragment() {}
+
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            addPreferencesFromResource(R.xml.settings);
+
+            String versionName = "";
+
+            try {
+                Context c = getActivity().getApplicationContext();
+                versionName = c.getPackageManager().getPackageInfo(c.getPackageName(), 0).versionName;
+            } catch (PackageManager.NameNotFoundException e) {
+                Logger.e(e, "message");
+            }
+
+            prefCache = findPreference(getString(R.string.pref_cache));
+            prefVersion = findPreference(getString(R.string.pref_version));
+            prefDownloadLastApk = findPreference(getString(R.string.pref_download_last_apk));
+            prefGeneralColor = (ColorPreference) findPreference(NamedPreferences.GENERAL_COLOR);
+
+            prefVersion.setSummary(versionName);
+            prefCache.setSummary(getCache());
+
+            prefCache.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    cleanCache();
+                    return false;
+                }
+            });
+
+            prefDownloadLastApk.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    Intent i = new Intent(Intent.ACTION_VIEW);
+                    i.setData(Uri.parse(Config.URL_DOWNLOAD_LAST_APK));
+                    startActivity(i);
+                    return false;
+                }
+            });
+
+            prefGeneralColor.setOnShowDialogListener(new ColorPreference.OnShowDialogListener() {
+
+                @Override
+                public void onShowColorPickerDialog(String title, int currentColor) {
+
+                    // Preference was clicked, we need to show the dialog.
+                    ColorPickerDialogFragment dialog = ColorPickerDialogFragment
+                            .newInstance(1, getString(R.string.pref_title_customisation_dialog), null, currentColor, false);
+
+                    // PLEASE READ!
+                    // Show the dialog, the result from the dialog
+                    // will end up in the parent activity since
+                    // there really isn't any good way for fragments
+                    // to communicate with each other. The recommended
+                    // ways is for them to communicate through their
+                    // host activity, thats what we will do.
+                    // In our case, we must then make sure that MainActivity
+                    // implements ColorPickerDialogListener because that
+                    // is expected by ColorPickerDialogFragment.
+                    //
+                    // We also make this fragment implement ColorPickerDialogListener
+                    // and when we receive the result in the activity's
+                    // ColorPickerDialogListener when just forward them
+                    // to this fragment instead.
+                    dialog.show(getFragmentManager(), "pre_dialog");
+                }
+            });
+        }
+
+        private void cleanCache() {
+            ImageLoader imageLoader = ImageLoader.getInstance();
+
+            imageLoader.clearDiskCache();
+            imageLoader.clearMemoryCache();
+
+            prefCache.setSummary(getCache());
+        }
+
+        private String getCache() {
+            long cacheSize = 0;
+            ImageLoader imageLoader = ImageLoader.getInstance();
+
+            File[] diskFiles = imageLoader.getDiskCache().getDirectory().listFiles();
+
+            for (File f : diskFiles) {
+                cacheSize += f.length();
+            }
+
+            Collection<String> memoryFiles = imageLoader.getMemoryCache().keys();
+            MemoryCache memoryCache = imageLoader.getMemoryCache();
+
+            for (String key : memoryFiles) {
+                cacheSize += RUVComUtils.sizeOf(memoryCache.get(key));
+            }
+
+            return RUVComUtils.humanReadableByteCount(cacheSize, true);
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
-    protected int sizeOf(Bitmap data) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR1) {
-            return data.getRowBytes() * data.getHeight();
-        } else {
-            return data.getByteCount();
-        }
+    @Override
+    public void onColorSelected(int dialogId, int color) {
+        Toast.makeText(SettingsActivity.this, "Selected Color: " + RUVComUtils.colorToHexString(color), Toast.LENGTH_SHORT).show();
     }
 
-    private void cleanCache() {
-        ImageLoader imageLoader = ImageLoader.getInstance();
+    @Override
+    public void onDialogDismissed(int dialogId) {
 
-        imageLoader.clearDiskCache();
-        imageLoader.clearMemoryCache();
-
-        prefCache.setSummary(getCache());
     }
 
-    private String getCache() {
-        long cacheSize = 0;
-        ImageLoader imageLoader = ImageLoader.getInstance();
-
-        File[] diskFiles = imageLoader.getDiskCache().getDirectory().listFiles();
-
-        for (File f : diskFiles) {
-            cacheSize += f.length();
-        }
-
-        Collection<String> memoryFiles = imageLoader.getMemoryCache().keys();
-        MemoryCache memoryCache = imageLoader.getMemoryCache();
-
-        for (String key : memoryFiles) {
-            cacheSize += sizeOf(memoryCache.get(key));
-        }
-
-        return humanReadableByteCount(cacheSize, true);
-    }
-
-    public static String humanReadableByteCount(long bytes, boolean si) {
-        int unit = si ? 1000 : 1024;
-        if (bytes < unit) return bytes + " B";
-        int exp = (int) (Math.log(bytes) / Math.log(unit));
-        String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp-1) + (si ? "" : "i");
-        return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
+    @Override
+    public void onColorChanged(int newColor) {
+        Toast.makeText(SettingsActivity.this, "Changed Color: " + RUVComUtils.colorToHexString(newColor), Toast.LENGTH_SHORT).show();
     }
 }

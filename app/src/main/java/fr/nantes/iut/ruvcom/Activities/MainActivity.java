@@ -56,8 +56,6 @@ public class MainActivity extends RUVBaseActivity
 
     private static final String TAG = "MainActivity";
 
-    private Toolbar toolbar;
-    private FloatingActionButton fab;
     private DrawerLayout drawer;
     private NavigationView navigationView;
     private ActionBarDrawerToggle toggle;
@@ -84,11 +82,23 @@ public class MainActivity extends RUVBaseActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        applicationContext = this;
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        convListView = (MultiStateListView) findViewById(R.id.listViewConversation);
+        View navigationHeaderView = navigationView.getHeaderView(0);
+        navAvatar = (CircularImageView) navigationHeaderView.findViewById(R.id.nav_avatar);
+        navDisplayName = (TextView) navigationHeaderView.findViewById(R.id.nav_display_name);
+        navEmail = (TextView) navigationHeaderView.findViewById(R.id.nav_email);
+        navBackground = (ImageView) navigationHeaderView.findViewById(R.id.nav_background);
 
+
+        applicationContext = this;
         user = (User) getIntent().getSerializableExtra("user");
         imageLoader = ImageLoader.getInstance();
 
@@ -96,18 +106,6 @@ public class MainActivity extends RUVBaseActivity
             distantUserFromNotif = (User) getIntent().getSerializableExtra(NamedPreferences.DISTANT_USER_FROM_PUSH);
             startConversationActivity(distantUserFromNotif);
         }
-
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        fab = (FloatingActionButton) findViewById(R.id.fab);
-        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        navigationView = (NavigationView) findViewById(R.id.nav_view);
-        convListView = (MultiStateListView) findViewById(R.id.listViewConversation);
-
-        View navigationHeaderView = navigationView.getHeaderView(0);
-        navAvatar = (CircularImageView) navigationHeaderView.findViewById(R.id.nav_avatar);
-        navDisplayName = (TextView) navigationHeaderView.findViewById(R.id.nav_display_name);
-        navEmail = (TextView) navigationHeaderView.findViewById(R.id.nav_email);
-        navBackground = (ImageView) navigationHeaderView.findViewById(R.id.nav_background);
 
         setSupportActionBar(toolbar);
 
@@ -137,6 +135,8 @@ public class MainActivity extends RUVBaseActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         loadNavContent();
+
+        applyColor();
 
         new getConvTask().execute();
     }

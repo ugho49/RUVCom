@@ -7,7 +7,7 @@
     android:background="@color/blue_grey_700"
     android:orientation="vertical"
     android:weightSum="6"
-    tools:context=".legacy.MainActivity">
+    tools:context=".Activities.SignInActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -53,7 +53,7 @@
         <RelativeLayout
             android:layout_height="match_parent"
             android:layout_width="match_parent"
-            android:background="@color/blue_grey_900">
+            android:background="@color/blue_grey_700">
 
             <com.google.android.gms.common.SignInButton
                 android:id="@+id/sign_in_button"
