@@ -15,9 +15,9 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.Toast;
 
-import com.jensdriller.libs.multistatelistview.MultiStateListView;
 import com.orhanobut.logger.Logger;
 
 import org.apache.http.NameValuePair;
@@ -57,7 +57,7 @@ public class ConversationActivity extends RUVBaseActivity implements View.OnClic
     private EditText editTextMessage;
 
     public static ListViewMessagesAdapter adapter;
-    public static MultiStateListView messageListView;
+    public static ListView messageListView;
 
     private Uri fileUri; // file url to store image/video
 
@@ -74,7 +74,7 @@ public class ConversationActivity extends RUVBaseActivity implements View.OnClic
         ImageButton sendButton = (ImageButton) findViewById(R.id.sendButton);
         ImageButton btnCapturePicture = (ImageButton) findViewById(R.id.cameraButton);
         editTextMessage = (EditText) findViewById(R.id.message);
-        messageListView = (MultiStateListView) findViewById(R.id.listViewMessages);
+        messageListView = (ListView) findViewById(R.id.listViewMessages);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         context = getApplicationContext();
 

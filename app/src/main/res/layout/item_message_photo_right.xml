@@ -7,34 +7,44 @@
     android:weightSum="10"
     android:padding="5dp">
 
+    <LinearLayout
+        android:layout_width="@dimen/user_image_conversation"
+        android:layout_height="1dp"
+        android:layout_marginStart="5dp"
+        android:layout_weight="2"/>
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="8"
-        android:gravity="center_vertical|end">
+        android:layout_weight="6"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:gravity="center_vertical">
 
         <ProgressBar
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_centerInParent="true"
             android:id="@+id/item_message_photo_right_progressbar" />
 
-        <ImageView
-            android:paddingLeft="5dp"
-            android:id="@+id/item_message_photo_right_image"
-            android:layout_width="wrap_content"
+        <com.github.siyamed.shapeimageview.RoundedImageView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:scaleType="centerCrop" />
+            android:scaleType="centerCrop"
+            android:id="@+id/item_message_photo_right_image"
+            app:siRadius="10dp"
+            app:siBorderWidth="3dp"
+            app:siBorderColor="@color/convLight"
+            app:siSquare="true" />
 
     </RelativeLayout>
 
-    <com.github.siyamed.shapeimageview.BubbleImageView
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_marginRight="5dp"
+    <com.github.siyamed.shapeimageview.CircularImageView
+        android:layout_width="@dimen/user_image_conversation"
+        android:layout_height="@dimen/user_image_conversation"
+        android:layout_marginEnd="5dp"
         android:id="@+id/item_message_photo_right_avatar"
-        app:siArrowPosition="left"
-        app:siTriangleHeight="5dp"
         android:layout_weight="2"
-        app:siSquare="true"/>
+        app:siBorderWidth="0dp"/>
 
 </LinearLayout>

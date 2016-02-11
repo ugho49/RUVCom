@@ -6,10 +6,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.github.siyamed.shapeimageview.BubbleImageView;
+import com.github.siyamed.shapeimageview.CircularImageView;
+import com.github.siyamed.shapeimageview.RoundedImageView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.List;
@@ -63,9 +63,9 @@ public class ListViewMessagesAdapter extends BaseAdapter {
     }
 
     private static class ViewHolder {
-        public BubbleImageView avatar;
+        public CircularImageView avatar;
         public TextView message;
-        public ImageView image;
+        public RoundedImageView image;
     }
 
     @Override
@@ -82,25 +82,25 @@ public class ListViewMessagesAdapter extends BaseAdapter {
             if (message.getIdUserSender() == user.getId()) {
                 // MY MESSAGE PHOTO
                 v = vi.inflate(R.layout.item_message_photo_right, null);
-                holder.avatar = (BubbleImageView) v.findViewById(R.id.item_message_photo_right_avatar);
-                holder.image = (ImageView) v.findViewById(R.id.item_message_photo_right_image);
+                holder.avatar = (CircularImageView) v.findViewById(R.id.item_message_photo_right_avatar);
+                holder.image = (RoundedImageView) v.findViewById(R.id.item_message_photo_right_image);
             } else {
                 // MESSAGE PHOTO FROM DISTANT USER
                 v = vi.inflate(R.layout.item_message_photo_left, null);
-                holder.avatar = (BubbleImageView) v.findViewById(R.id.item_message_photo_left_avatar);
-                holder.image = (ImageView) v.findViewById(R.id.item_message_photo_left_image);
+                holder.avatar = (CircularImageView) v.findViewById(R.id.item_message_photo_left_avatar);
+                holder.image = (RoundedImageView) v.findViewById(R.id.item_message_photo_left_image);
             }
         } else {
             // MESSAGES TEXT
             if (message.getIdUserSender() == user.getId()) {
                 // MY MESSAGE TEXT
                 v = vi.inflate(R.layout.item_message_right, null);
-                holder.avatar = (BubbleImageView) v.findViewById(R.id.item_message_right_avatar);
+                holder.avatar = (CircularImageView) v.findViewById(R.id.item_message_right_avatar);
                 holder.message = (TextView) v.findViewById(R.id.item_message_right_text);
             } else {
                 // MESSAGE TEXT FROM DISTANT USER
                 v = vi.inflate(R.layout.item_message_left, null);
-                holder.avatar = (BubbleImageView) v.findViewById(R.id.item_message_left_avatar);
+                holder.avatar = (CircularImageView) v.findViewById(R.id.item_message_left_avatar);
                 holder.message = (TextView) v.findViewById(R.id.item_message_left_text);
             }
         }
