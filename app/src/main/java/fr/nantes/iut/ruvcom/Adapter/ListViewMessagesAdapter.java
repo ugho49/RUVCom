@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.siyamed.shapeimageview.CircularImageView;
 import com.github.siyamed.shapeimageview.RoundedImageView;
@@ -136,6 +137,15 @@ public class ListViewMessagesAdapter extends BaseAdapter {
                     fullScreenImageIntent.putExtra("imageUrl", message.getPhoto().getUrl());
                     fullScreenImageIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     _c.startActivity(fullScreenImageIntent);
+                }
+            });
+
+            holder.image.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    // TODO : téléchargement de l'image
+                    Toast.makeText(_c, "A venir téléchargement de l'image", Toast.LENGTH_SHORT).show();
+                    return false;
                 }
             });
         } else {
