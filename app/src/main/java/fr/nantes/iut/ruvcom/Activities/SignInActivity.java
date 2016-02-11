@@ -44,6 +44,7 @@ import java.util.ArrayList;
 import fr.nantes.iut.ruvcom.Bean.User;
 import fr.nantes.iut.ruvcom.R;
 import fr.nantes.iut.ruvcom.RUVComApplication;
+import fr.nantes.iut.ruvcom.Utils.CacheUtils;
 import fr.nantes.iut.ruvcom.Utils.Config;
 import fr.nantes.iut.ruvcom.Utils.ConnectionDetector;
 import fr.nantes.iut.ruvcom.Utils.NamedPreferences;
@@ -64,6 +65,7 @@ public class SignInActivity extends RUVBaseActivity implements
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private static final int RC_SIGN_IN = 9001;
 
+    private CacheUtils cacheUtils;
     private GoogleSignInAccount mGoogleSignInAccount;
 
     private BroadcastReceiver mRegistrationBroadcastReceiver;
@@ -83,6 +85,8 @@ public class SignInActivity extends RUVBaseActivity implements
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             getWindow().setStatusBarColor(getResources().getColor(R.color.blue_grey_900));
         }
+
+        cacheUtils = new CacheUtils(getApplicationContext());
 
         // Views
         signInButton = (SignInButton) findViewById(R.id.sign_in_button);
@@ -123,10 +127,10 @@ public class SignInActivity extends RUVBaseActivity implements
         // options specified by gso.
         RUVComApplication.mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
-        .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .addApi(LocationServices.API)
                 .addConnectionCallbacks(this)
-        .build();
+                .build();
 
         // Customize sign-in button. The sign-in button can be displayed in
         // multiple sizes and color schemes. It can also be contextually
@@ -147,25 +151,33 @@ public class SignInActivity extends RUVBaseActivity implements
     public void onStart() {
         super.onStart();
 
-        OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(RUVComApplication.mGoogleApiClient);
-        if (opr.isDone()) {
-            // If the user's cached credentials are valid, the OptionalPendingResult will be "done"
-            // and the GoogleSignInResult will be available instantly.
-            Logger.t(TAG).d("Got cached sign-in");
-            GoogleSignInResult result = opr.get();
-            handleSignInResult(result);
+        if (!ConnectionDetector.isConnectingToInternet(getApplicationContext())) {
+            showSnackError("Aucune connexion internet !");
         } else {
-            // If the user has not previously signed in on this device or the sign-in has expired,
-            // this asynchronous branch will attempt to sign in the user silently.  Cross-device
-            // single sign-on will occur in this branch.
-            showProgressDialog();
-            opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
-                @Override
-                public void onResult(GoogleSignInResult googleSignInResult) {
-                    hideProgressDialog();
-                    handleSignInResult(googleSignInResult);
+            if (cacheUtils.isSavedUser()) {
+                openMainActivity(cacheUtils.getCurrentUser());
+            } else {
+                OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(RUVComApplication.mGoogleApiClient);
+                if (opr.isDone()) {
+                    // If the user's cached credentials are valid, the OptionalPendingResult will be "done"
+                    // and the GoogleSignInResult will be available instantly.
+                    Logger.t(TAG).d("Got cached sign-in");
+                    GoogleSignInResult result = opr.get();
+                    handleSignInResult(result);
+                } else {
+                    // If the user has not previously signed in on this device or the sign-in has expired,
+                    // this asynchronous branch will attempt to sign in the user silently.  Cross-device
+                    // single sign-on will occur in this branch.
+                    showProgressDialog();
+                    opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
+                        @Override
+                        public void onResult(GoogleSignInResult googleSignInResult) {
+                            hideProgressDialog();
+                            handleSignInResult(googleSignInResult);
+                        }
+                    });
                 }
-            });
+            }
         }
     }
 
@@ -318,6 +330,29 @@ public class SignInActivity extends RUVBaseActivity implements
         snackbar.show();
     }
 
+    private void registerGCM(User user) {
+        if (checkPlayServices()) {
+            // Start IntentService to register this application with GCM.
+            Intent intent = new Intent(SignInActivity.this, RegistrationIntentService.class);
+            intent.putExtra("user", user);
+            startService(intent);
+        }
+    }
+
+    private void openMainActivity(User user) {
+        registerGCM(user);
+
+        Intent intent = new Intent(getBaseContext(), MainActivity.class);
+        intent.putExtra("user", user);
+
+        if(distantUserFromNotif != null) {
+            intent.putExtra(NamedPreferences.DISTANT_USER_FROM_PUSH, distantUserFromNotif);
+        }
+
+        startActivity(intent);
+        finish();
+    }
+
     private class LoginTask extends AsyncTask<Void, Void, User> {
 
         private User user;
@@ -404,23 +439,8 @@ public class SignInActivity extends RUVBaseActivity implements
                 showSnackError("Erreur d'authentification");
                 setSigninButtonHidden(false);
             } else {
-
-                if (checkPlayServices()) {
-                    // Start IntentService to register this application with GCM.
-                    Intent intent = new Intent(SignInActivity.this, RegistrationIntentService.class);
-                    intent.putExtra("user", result);
-                    startService(intent);
-                }
-
-                Intent intent = new Intent(getBaseContext(), MainActivity.class);
-                intent.putExtra("user", result);
-
-                if(distantUserFromNotif != null) {
-                    intent.putExtra(NamedPreferences.DISTANT_USER_FROM_PUSH, distantUserFromNotif);
-                }
-
-                startActivity(intent);
-                finish();
+                cacheUtils.saveCurrentUser(result);
+                openMainActivity(result);
             }
         }
     }

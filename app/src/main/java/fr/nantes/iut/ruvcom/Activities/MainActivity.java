@@ -45,6 +45,7 @@ import fr.nantes.iut.ruvcom.Adapter.ListViewConversationAdapter;
 import fr.nantes.iut.ruvcom.Bean.Conversation;
 import fr.nantes.iut.ruvcom.Bean.User;
 import fr.nantes.iut.ruvcom.R;
+import fr.nantes.iut.ruvcom.Utils.CacheUtils;
 import fr.nantes.iut.ruvcom.Utils.Config;
 import fr.nantes.iut.ruvcom.Utils.NamedPreferences;
 import fr.nantes.iut.ruvcom.Utils.Requestor;
@@ -231,6 +232,7 @@ public class MainActivity extends RUVBaseActivity
 
                                 Toast.makeText(getApplicationContext(), "Déconnexion réussie", Toast.LENGTH_SHORT).show();
                                 deleteGCMOnBase();
+                                new CacheUtils(getApplicationContext()).removeCurrentUser();
                                 Intent otherActivity = new Intent(getBaseContext(), SignInActivity.class);
                                 startActivity(otherActivity);
                                 finish();
