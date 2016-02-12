@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,7 +29,6 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
-import com.jensdriller.libs.multistatelistview.MultiStateListView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.orhanobut.logger.Logger;
 
@@ -68,7 +68,7 @@ public class MainActivity extends RUVBaseActivity
     private TextView navEmail;
     private ImageView navBackground;
 
-    public static MultiStateListView convListView;
+    public static ListView convListView;
 
     private GoogleApiClient mGoogleApiClient;
     private ImageLoader imageLoader;
@@ -91,7 +91,7 @@ public class MainActivity extends RUVBaseActivity
         fab = (FloatingActionButton) findViewById(R.id.fab);
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         navigationView = (NavigationView) findViewById(R.id.nav_view);
-        convListView = (MultiStateListView) findViewById(R.id.listViewConversation);
+        convListView = (ListView) findViewById(R.id.listViewConversation);
         View navigationHeaderView = navigationView.getHeaderView(0);
         navAvatar = (CircularImageView) navigationHeaderView.findViewById(R.id.nav_avatar);
         navDisplayName = (TextView) navigationHeaderView.findViewById(R.id.nav_display_name);
@@ -137,6 +137,11 @@ public class MainActivity extends RUVBaseActivity
         loadNavContent();
 
         applyColor();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
 
         new getConvTask().execute();
     }
@@ -168,13 +173,6 @@ public class MainActivity extends RUVBaseActivity
     @Override
     public void onBackPressed() {
         finish();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        new getConvTask().execute();
     }
 
     @Override
@@ -386,11 +384,6 @@ public class MainActivity extends RUVBaseActivity
     public static class getConvTask extends AsyncTask<Void, Void, List<Conversation>> {
 
         @Override
-        protected void onPreExecute() {
-            //showProgressDialog();
-        }
-
-        @Override
         protected List<Conversation> doInBackground(Void... u) {
 
             List<Conversation> result = new ArrayList<>();
@@ -426,27 +419,7 @@ public class MainActivity extends RUVBaseActivity
         // onPostExecute displays the results of the AsyncTask.
         @Override
         protected void onPostExecute(List<Conversation> result) {
-            boolean bool_update_view = false;
-
-            if(convListView.getCount() != 0) {
-                for (int i = 0; i < result.size(); i++) {
-                    String convListViewString = convListView.getAdapter().getItem(i).toString();
-                    String resultString = result.get(i).toString();
-
-                    if (!convListViewString.equals(resultString)) {
-                        bool_update_view = true;
-                        break;
-                    }
-                }
-            } else {
-                bool_update_view = true;
-            }
-
-            if(bool_update_view) {
-                loadListView(result);
-            }
-
-            //hideProgressDialog();
+            loadListView(result);
         }
     }
 

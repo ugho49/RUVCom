@@ -1,5 +1,7 @@
 package fr.nantes.iut.ruvcom.Activities;
 
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -25,17 +27,22 @@ public abstract class RUVBaseActivity extends AppCompatActivity {
     protected Window window;
     protected Toolbar toolbar;
     protected FloatingActionButton fab;
+    protected NotificationManager notificationManager;
     protected final static int baseColor = Color.parseColor("#37474F");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         window = getWindow();
+        // Disable notification if exist
+         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
+        notificationManager.cancelAll();
 
         if(!SignInActivity.class.getSimpleName().equals(RUVComApplication.activityRunningName)) {
             applyColor();

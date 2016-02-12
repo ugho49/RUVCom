@@ -1,6 +1,5 @@
 package fr.nantes.iut.ruvcom.Activities;
 
-import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -88,7 +87,10 @@ public class ConversationActivity extends RUVBaseActivity implements View.OnClic
 
         toolbar.setTitle(distantUser.getDisplayName());
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         // Checking camera availability
         if (!isDeviceSupportCamera()) {
@@ -97,21 +99,19 @@ public class ConversationActivity extends RUVBaseActivity implements View.OnClic
             btnCapturePicture.setOnClickListener(this);
         }
 
-        // Disable notification if exist
-        NotificationManager notificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        notificationManager.cancelAll();
-
         applyColor();
-
-        new getMessagesTask().execute();
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(R.anim.in_left_to_right, R.anim.out_left_to_right);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        new getMessagesTask().execute();
     }
 
     @Override
@@ -285,9 +285,6 @@ public class ConversationActivity extends RUVBaseActivity implements View.OnClic
                     adapter.setList(messages);
                     adapter.setDistantUser(distantUser);
                 }
-
-                updateRead();
-
                 return null;
             }
 
@@ -296,6 +293,7 @@ public class ConversationActivity extends RUVBaseActivity implements View.OnClic
             protected void onPostExecute(String result) {
                 messageListView.setAdapter(adapter);
                 goBottomListView();
+                updateRead();
             }
         }.execute();
     }
@@ -370,8 +368,6 @@ public class ConversationActivity extends RUVBaseActivity implements View.OnClic
             //List<Message> result = new ArrayList<>();
 
             try{
-                updateRead();
-
                 String URL = String.format(Config.API_MESSAGES_GET, String.valueOf(user.getId()), String.valueOf(distantUser.getId()));
 
                 final JSONObject json = new Requestor(URL).get();
@@ -403,18 +399,23 @@ public class ConversationActivity extends RUVBaseActivity implements View.OnClic
         // onPostExecute displays the results of the AsyncTask.
         @Override
         protected void onPostExecute(String result) {
+            updateRead();
             loadListView();
         }
     }
 
     public static void updateRead() {
-        // UPDATE MESSAGES READ
-        String URL_UPDATE_MESSAGE_READ = String.format(Config.API_UPDATE_MESSAGE_READ, String.valueOf(user.getId()), String.valueOf(distantUser.getId()));
+        new AsyncTask<Void, Void, String>() {
+            @Override
+            protected String doInBackground(Void... u) {
+                String URL_UPDATE_MESSAGE_READ = String.format(Config.API_UPDATE_MESSAGE_READ, String.valueOf(user.getId()), String.valueOf(distantUser.getId()));
 
-        ArrayList<NameValuePair> params = new ArrayList<>();
-        params.add(new BasicNameValuePair("token", Config.SECRET_TOKEN));
+                ArrayList<NameValuePair> params = new ArrayList<>();
+                params.add(new BasicNameValuePair("token", Config.SECRET_TOKEN));
 
-        new Requestor(URL_UPDATE_MESSAGE_READ).post(params);
-        // END UPDATE
+                new Requestor(URL_UPDATE_MESSAGE_READ).post(params);
+                return null;
+            }
+        }.execute();
     }
 }

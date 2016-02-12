@@ -44,7 +44,6 @@ dependencies {
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
     compile 'com.github.siyamed:android-shape-imageview:0.9.3'
     compile 'com.github.orhanobut:logger:1.12'
-    compile 'com.github.jenzz.multistatelistview:library:1.0'
     compile 'com.github.danielnilsson9:color-picker-view:1.4.0'
     compile 'com.google.code.gson:gson:2.5'
 }
