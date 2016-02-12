@@ -12,7 +12,7 @@ import java.util.Date;
 /**
  * Created by ughostephan on 20/01/2016.
  */
-public class Conversation extends BaseBean {
+public class Conversation extends BaseBean implements Comparable<Conversation> {
 
     private User user;
     private Boolean notification;
@@ -68,5 +68,10 @@ public class Conversation extends BaseBean {
                     "notification:" + notification + "," +
                     "lastDateMessage" + lastDateMessage +
                 "}";
+    }
+
+    @Override
+    public int compareTo(Conversation o) {
+        return getLastDateMessage().compareTo(o.getLastDateMessage());
     }
 }

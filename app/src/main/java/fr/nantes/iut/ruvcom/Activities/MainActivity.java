@@ -38,6 +38,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import fr.nantes.iut.ruvcom.Adapter.DialogListUserAdapter;
@@ -419,6 +420,7 @@ public class MainActivity extends RUVBaseActivity
         // onPostExecute displays the results of the AsyncTask.
         @Override
         protected void onPostExecute(List<Conversation> result) {
+            Collections.sort(result, Collections.reverseOrder());
             loadListView(result);
         }
     }
