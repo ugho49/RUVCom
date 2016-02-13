@@ -1,8 +1,11 @@
 package fr.nantes.iut.ruvcom.Activities;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
@@ -13,6 +16,7 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -67,13 +71,14 @@ public abstract class RUVBaseActivity extends AppCompatActivity {
             public void onProviderDisabled(String provider) {
             }
         };
-        // Check the permission to access to location only if API 23 or greater
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
-                String permissions[] = { Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION };
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // Check the permission to access to location only if API 23 or greater
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                String permissions[] = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
                 requestPermissions(permissions, REQUEST_CODE_PERMISSION_LOCALISATION);
-
+            } else {
+                requestLocationUpdate();
             }
         } else {
             requestLocationUpdate();
@@ -137,10 +142,58 @@ public abstract class RUVBaseActivity extends AppCompatActivity {
 
     protected void requestLocationUpdate() {
         try {
+            enabledLocationIfNotEnabled();
             // Register the listener with the Location Manager to receive location updates
             locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
         } catch (SecurityException e) {
             Logger.e(e, "message");
+        }
+    }
+
+    private void enabledLocationIfNotEnabled() {
+        boolean gps_enabled = false;
+        boolean network_enabled = false;
+
+        try {
+            gps_enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        } catch(Exception ex) {
+            Logger.e(ex, "GPS LOCATION not enabled");
+        }
+
+        try {
+            network_enabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        } catch(Exception ex) {
+            Logger.e(ex, "NETWORK LOCATION not enabled");
+        }
+
+        final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        boolean questionAlreadAsk = preferences.getBoolean(NamedPreferences.ASK_ACTIVATE_GPS, false);
+
+        if(!gps_enabled && !network_enabled && !questionAlreadAsk) {
+            // notify user
+            AlertDialog.Builder dialog = new AlertDialog.Builder(RUVBaseActivity.this);
+            dialog.setTitle(getResources().getString(R.string.gps_network_not_enabled));
+            dialog.setMessage(getResources().getString(R.string.open_location_settings));
+            dialog.setPositiveButton(getResources().getString(R.string.activate_gps),
+                    new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                    SharedPreferences.Editor editor = preferences.edit();
+                    editor.putBoolean(NamedPreferences.ASK_ACTIVATE_GPS, true);
+                    editor.commit();
+                    Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    startActivity(myIntent);
+                }
+            });
+            dialog.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                    SharedPreferences.Editor editor = preferences.edit();
+                    editor.putBoolean(NamedPreferences.ASK_ACTIVATE_GPS, true);
+                    editor.commit();
+                }
+            });
+            dialog.show();
         }
     }
 }
