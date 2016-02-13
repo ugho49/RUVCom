@@ -8,7 +8,6 @@ import com.google.android.gms.iid.InstanceIDListenerService;
  * Created by ughostephan on 21/01/2016.
  */
 public class MyInstanceIDListenerService extends InstanceIDListenerService {
-    private static final String TAG = "MyInstanceIDLS";
 
     /**
      * Called if InstanceID token is updated. This may occur if the security of

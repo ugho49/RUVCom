@@ -33,7 +33,7 @@ import fr.nantes.iut.ruvcom.Utils.NamedPreferences;
  */
 public class RUVGcmListenerService extends GcmListenerService {
 
-    private static final String TAG = "MyGcmListenerService";
+    private static final String TAG = RUVGcmListenerService.class.getSimpleName();
 
     private SharedPreferences preferences;
 
