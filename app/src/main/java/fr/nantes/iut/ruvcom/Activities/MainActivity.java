@@ -32,8 +32,6 @@ import com.google.android.gms.common.api.Status;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.orhanobut.logger.Logger;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -50,13 +48,15 @@ import fr.nantes.iut.ruvcom.Utils.CacheUtils;
 import fr.nantes.iut.ruvcom.Utils.Config;
 import fr.nantes.iut.ruvcom.Utils.NamedPreferences;
 import fr.nantes.iut.ruvcom.Utils.Requestor;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 public class MainActivity extends RUVBaseActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         GoogleApiClient.OnConnectionFailedListener, AdapterView.OnItemClickListener {
 
 
-    private static final String TAG = "MainActivity";
+    private static final String TAG = MainActivity.class.getSimpleName();
 
     private DrawerLayout drawer;
     private NavigationView navigationView;
@@ -305,17 +305,18 @@ public class MainActivity extends RUVBaseActivity
 
     private void deleteGCMOnBase() {
         new AsyncTask<Void, Void, String> () {
-
             @Override
             protected String doInBackground(Void... u) {
-
                 try{
                     String URL = String.format(Config.API_USER_DELETE_GCM, String.valueOf(user.getId()));
 
-                    ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
-                    params.add(new BasicNameValuePair("token", Config.SECRET_TOKEN));
+                    RequestBody requestBody =
+                            new MultipartBody.Builder()
+                                    .setType(MultipartBody.FORM)
+                                    .addFormDataPart("token", Config.SECRET_TOKEN)
+                                    .build();
 
-                    new Requestor(URL).post(params);
+                    new Requestor(URL).post(requestBody);
                 }
                 catch(Exception ex) {
                     Logger.e(ex, "message");

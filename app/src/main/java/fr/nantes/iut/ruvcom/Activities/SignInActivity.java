@@ -34,12 +34,9 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.location.LocationServices;
 import com.orhanobut.logger.Logger;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
 import java.net.URLEncoder;
-import java.util.ArrayList;
 
 import fr.nantes.iut.ruvcom.Bean.User;
 import fr.nantes.iut.ruvcom.R;
@@ -50,6 +47,8 @@ import fr.nantes.iut.ruvcom.Utils.ConnectionDetector;
 import fr.nantes.iut.ruvcom.Utils.NamedPreferences;
 import fr.nantes.iut.ruvcom.Utils.Requestor;
 import fr.nantes.iut.ruvcom.gcm.RegistrationIntentService;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 /**
  * Activity to demonstrate basic retrieval of the Google user's ID, email address, and basic
@@ -60,7 +59,7 @@ public class SignInActivity extends RUVBaseActivity implements
         GoogleApiClient.ConnectionCallbacks,
         View.OnClickListener {
 
-    private static final String TAG = "SignInActivity";
+    private static final String TAG = SignInActivity.class.getSimpleName();
 
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private static final int RC_SIGN_IN = 9001;
@@ -374,10 +373,10 @@ public class SignInActivity extends RUVBaseActivity implements
 
             try{
                 StringBuilder URL_COVER = new StringBuilder();
-                URL_COVER.append("https://www.googleapis.com/plus/v1/people/");
-                URL_COVER.append(user.getGoogleId());
-                URL_COVER.append("?fields=cover%2FcoverPhoto%2Furl&key=");
-                URL_COVER.append(Config.API_KEY);
+                URL_COVER.append("https://www.googleapis.com/plus/v1/people/")
+                        .append(user.getGoogleId())
+                        .append("?fields=cover%2FcoverPhoto%2Furl&key=")
+                        .append(Config.API_KEY);
 
                 String googleID      = URLEncoder.encode(user.getGoogleId(), "UTF-8");
                 String displayName   = URLEncoder.encode(user.getDisplayName(), "UTF-8");
@@ -385,6 +384,7 @@ public class SignInActivity extends RUVBaseActivity implements
                 String imageURL      = user.getImageUrl();
                 String coverURL      = "";
 
+                // Récupération de la photo de couverture
                 final JSONObject coverObj = new Requestor(URL_COVER.toString()).get();
 
                 if (!coverObj.isNull("cover")) {
@@ -395,15 +395,11 @@ public class SignInActivity extends RUVBaseActivity implements
 
                 String URL_USER_EXIST = String.format(Config.API_USER_EXIST, googleID);
 
+                // Savoir si l'utilisateur est déjà inscrit sur le serveur
                 final JSONObject resultExists = new Requestor(URL_USER_EXIST).get();
                 Boolean error = resultExists.getBoolean("error");
 
                 String URL_UPDATE_OR_REGISTER = null;
-
-                ArrayList<NameValuePair> params = new ArrayList<>();
-                params.add(new BasicNameValuePair("token", Config.SECRET_TOKEN));
-                params.add(new BasicNameValuePair("imageUrl", imageURL));
-                params.add(new BasicNameValuePair("coverImageUrl", coverURL));
 
                 if(error) {
                     URL_UPDATE_OR_REGISTER = String.format(Config.API_USER_CREATE, googleID, displayName, email);
@@ -412,7 +408,17 @@ public class SignInActivity extends RUVBaseActivity implements
                     URL_UPDATE_OR_REGISTER = String.format(Config.API_USER_UPDATE, userId, googleID, displayName, email);
                 }
 
-                final JSONObject json = new Requestor(URL_UPDATE_OR_REGISTER).post(params);
+                RequestBody requestBody =
+                        new MultipartBody.Builder()
+                                .setType(MultipartBody.FORM)
+                                .addFormDataPart("token", Config.SECRET_TOKEN)
+                                .addFormDataPart("imageUrl", imageURL)
+                                .addFormDataPart("coverImageUrl", coverURL)
+                                .build();
+
+                // Inscription ou mise à jour de l'utilisateur en base
+                final JSONObject json = new Requestor(URL_UPDATE_OR_REGISTER).post(requestBody);
+
                 JSONObject data = null;
                 if (json != null) {
                     if (!json.isNull("data")) {

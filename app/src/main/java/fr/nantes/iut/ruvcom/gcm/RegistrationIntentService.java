@@ -12,17 +12,16 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
 import com.orhanobut.logger.Logger;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import fr.nantes.iut.ruvcom.Bean.User;
 import fr.nantes.iut.ruvcom.Utils.Config;
 import fr.nantes.iut.ruvcom.Utils.NamedPreferences;
 import fr.nantes.iut.ruvcom.Utils.Requestor;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 
 /**
@@ -100,11 +99,14 @@ public class RegistrationIntentService extends IntentService {
                 try{
                     String URL = String.format(Config.API_USER_REGISTER_GCM, String.valueOf(currentUser.getId()));
 
-                    ArrayList<NameValuePair> params = new ArrayList<>();
-                    params.add(new BasicNameValuePair("token", Config.SECRET_TOKEN));
-                    params.add(new BasicNameValuePair("idDevice", token));
+                    RequestBody requestBody =
+                            new MultipartBody.Builder()
+                                    .setType(MultipartBody.FORM)
+                                    .addFormDataPart("token", Config.SECRET_TOKEN)
+                                    .addFormDataPart("idDevice", token)
+                                    .build();
 
-                    final JSONObject json = new Requestor(URL).post(params);
+                    final JSONObject json = new Requestor(URL).post(requestBody);
                 }
                 catch(Exception ex) {
                     //Log.d(TAG, "Fail : " + ex.getMessage());

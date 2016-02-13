@@ -19,8 +19,6 @@ import android.widget.Toast;
 
 import com.orhanobut.logger.Logger;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -37,6 +35,8 @@ import fr.nantes.iut.ruvcom.Bean.User;
 import fr.nantes.iut.ruvcom.R;
 import fr.nantes.iut.ruvcom.Utils.Config;
 import fr.nantes.iut.ruvcom.Utils.Requestor;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 public class ConversationActivity extends RUVBaseActivity implements View.OnClickListener {
 
@@ -48,7 +48,7 @@ public class ConversationActivity extends RUVBaseActivity implements View.OnClic
     public static final int MEDIA_TYPE_IMAGE = 1;
     //public static final int MEDIA_TYPE_VIDEO = 2;
 
-    private static final String TAG = "ConversationActivity";
+    private static final String TAG = ConversationActivity.class.getSimpleName();
 
     public static User user;
     public static User distantUser;
@@ -245,14 +245,8 @@ public class ConversationActivity extends RUVBaseActivity implements View.OnClic
      * Checking device has camera hardware or not
      * */
     private boolean isDeviceSupportCamera() {
-        if (getApplicationContext().getPackageManager().hasSystemFeature(
-                PackageManager.FEATURE_CAMERA)) {
-            // this device has a camera
-            return true;
-        } else {
-            // no camera on this device
-            return false;
-        }
+        return getApplicationContext().getPackageManager().hasSystemFeature(
+                PackageManager.FEATURE_CAMERA);
     }
 
     /**
@@ -319,11 +313,14 @@ public class ConversationActivity extends RUVBaseActivity implements View.OnClic
             try{
                 String URL = String.format(Config.API_MESSAGE_POST, String.valueOf(user.getId()), String.valueOf(distantUser.getId()));
 
-                ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
-                params.add(new BasicNameValuePair("token", Config.SECRET_TOKEN));
-                params.add(new BasicNameValuePair("message", message));
+                RequestBody requestBody =
+                        new MultipartBody.Builder()
+                                .setType(MultipartBody.FORM)
+                                .addFormDataPart("token", Config.SECRET_TOKEN)
+                                .addFormDataPart("message", message)
+                                .build();
 
-                final JSONObject json = new Requestor(URL).post(params);
+                final JSONObject json = new Requestor(URL).post(requestBody);
 
                 if (json != null) {
                     error = json.getBoolean("error");
@@ -410,10 +407,14 @@ public class ConversationActivity extends RUVBaseActivity implements View.OnClic
             protected String doInBackground(Void... u) {
                 String URL_UPDATE_MESSAGE_READ = String.format(Config.API_UPDATE_MESSAGE_READ, String.valueOf(user.getId()), String.valueOf(distantUser.getId()));
 
-                ArrayList<NameValuePair> params = new ArrayList<>();
-                params.add(new BasicNameValuePair("token", Config.SECRET_TOKEN));
+                RequestBody requestBody =
+                        new MultipartBody.Builder()
+                                .setType(MultipartBody.FORM)
+                                .addFormDataPart("token", Config.SECRET_TOKEN)
+                                .build();
 
-                new Requestor(URL_UPDATE_MESSAGE_READ).post(params);
+                new Requestor(URL_UPDATE_MESSAGE_READ).post(requestBody);
+
                 return null;
             }
         }.execute();
