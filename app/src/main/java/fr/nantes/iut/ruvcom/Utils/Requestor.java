@@ -1,7 +1,5 @@
 package fr.nantes.iut.ruvcom.Utils;
 
-import android.util.Log;
-
 import com.orhanobut.logger.Logger;
 
 import org.apache.http.HttpResponse;
@@ -27,14 +25,23 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.security.KeyStore;
 import java.util.ArrayList;
+
+import okhttp3.Headers;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * Created by ughostephan on 20/01/2016.
  */
 public class Requestor {
+
+    public static final MediaType MEDIA_TYPE_PNG = MediaType.parse("image/png");
+    public static final MediaType MEDIA_TYPE_JPEG = MediaType.parse("image/jpeg");
 
     private String URL;
     private static HttpClient httpclient;
@@ -55,9 +62,6 @@ public class Requestor {
             }
 
             response = returnResponse(httpclient.execute(httppost));
-        } catch (UnsupportedEncodingException e) {
-            //Log.e("Requestor_HTTPPOST", e.getMessage());
-            Logger.e(e, "message");
         } catch (IOException e) {
             //Log.e("Requestor_HTTPPOST", e.getMessage());
             Logger.e(e, "message");
@@ -77,15 +81,37 @@ public class Requestor {
             }
 
             response = returnResponse(httpclient.execute(httppost));
-        } catch (UnsupportedEncodingException e) {
-            //Log.e("Requestor_HTTPPOST", e.getMessage());
-            Logger.e(e, "message");
         } catch (IOException e) {
             //Log.e("Requestor_HTTPPOST", e.getMessage());
             Logger.e(e, "message");
         }
 
         return response;
+    }
+
+    public JSONObject post(RequestBody body) {
+
+        JSONObject object = null;
+        final OkHttpClient client = new OkHttpClient();
+
+        Request request = new Request.Builder()
+                .url(URL)
+                .post(body)
+                .build();
+
+        try {
+            Response response = client.newCall(request).execute();
+
+            if (!response.isSuccessful()) {
+                Logger.i("Unexpected code " + response);
+            }
+
+            object = new JSONObject(response.body().string());
+        } catch (JSONException | IOException e) {
+            Logger.e(e, "message");
+        }
+
+        return object;
     }
 
     public JSONObject get() {
@@ -109,10 +135,7 @@ public class Requestor {
         try {
             String result = EntityUtils.toString(httpResponse.getEntity());
             jsonresult = new JSONObject(result);
-        } catch (JSONException e) {
-            //Log.e("Requestor_Response", e.getMessage());
-            Logger.e(e, "message");
-        } catch (IOException e) {
+        } catch (JSONException | IOException e) {
             //Log.e("Requestor_Response", e.getMessage());
             Logger.e(e, "message");
         }
@@ -142,5 +165,9 @@ public class Requestor {
         } catch (Exception e) {
             return new DefaultHttpClient();
         }
+    }
+
+    public static Headers getheader(String name) {
+        return Headers.of("Content-Disposition", "form-data; name=\"" + name + "\"");
     }
 }

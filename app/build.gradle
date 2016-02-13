@@ -46,4 +46,5 @@ dependencies {
     compile 'com.github.orhanobut:logger:1.12'
     compile 'com.github.danielnilsson9:color-picker-view:1.4.0'
     compile 'com.google.code.gson:gson:2.5'
+    compile 'com.squareup.okhttp3:okhttp:3.1.2'
 }

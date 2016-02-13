@@ -14,21 +14,20 @@ import android.widget.Toast;
 
 import com.orhanobut.logger.Logger;
 
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.entity.mime.content.StringBody;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.IOException;
 
 import fr.nantes.iut.ruvcom.Bean.Message;
 import fr.nantes.iut.ruvcom.Bean.User;
 import fr.nantes.iut.ruvcom.R;
 import fr.nantes.iut.ruvcom.RUVComApplication;
-import fr.nantes.iut.ruvcom.Utils.AndroidMultiPartEntity;
 import fr.nantes.iut.ruvcom.Utils.Config;
+import fr.nantes.iut.ruvcom.Utils.CountingRequestBody;
 import fr.nantes.iut.ruvcom.Utils.Requestor;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 public class UploadActivity extends RUVBaseActivity {
 
@@ -79,7 +78,7 @@ public class UploadActivity extends RUVBaseActivity {
 
     /**
      * Displaying captured image on the screen
-     * */
+     */
     private void previewMedia() {
         imgPreview.setVisibility(View.VISIBLE);
         // bimatp factory
@@ -94,7 +93,7 @@ public class UploadActivity extends RUVBaseActivity {
 
     /**
      * Uploading the file to server
-     * */
+     */
     private class UploadFileTask extends AsyncTask<Void, Integer, Message> {
         @Override
         protected void onPreExecute() {
@@ -130,31 +129,36 @@ public class UploadActivity extends RUVBaseActivity {
                     URL = String.format(Config.API_UPLOAD_PICTURE, String.valueOf(user.getId()), String.valueOf(distantUser.getId()));
                 }
 
-                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
-                        new AndroidMultiPartEntity.ProgressListener() {
+                final File sourceFile = new File(filePath);
+
+                RequestBody requestBody =
+                        new MultipartBody.Builder()
+                                .setType(MultipartBody.FORM)
+                                .addFormDataPart("token", Config.SECRET_TOKEN)
+                                .addFormDataPart("image", sourceFile.getName(),
+                                        RequestBody.create(Requestor.MEDIA_TYPE_JPEG, sourceFile))
+                                .build();
+
+                // Decorate the request body to keep track of the upload progress
+                CountingRequestBody countingBody = new CountingRequestBody(requestBody,
+                        new CountingRequestBody.Listener() {
                             @Override
-                            public void transferred(long num) {
-                                publishProgress((int) ((num / (float) totalSize) * 100));
+                            public void onRequestProgress(long bytesWritten, long contentLength) {
+                                float percentage = 100f * bytesWritten / contentLength;
+                                publishProgress((int) percentage);
                             }
                         });
 
-                final File sourceFile = new File(filePath);
+                totalSize = countingBody.contentLength();
 
-                // Adding file data to http body
-                entity.addPart("image", new FileBody(sourceFile));
-                totalSize = entity.getContentLength();
-                entity.addPart("token", new StringBody(Config.SECRET_TOKEN));
+                final JSONObject response = new Requestor(URL).post(countingBody);
 
-                final JSONObject response = new Requestor(URL).post(entity);
-
-                if(response != null) {
+                if (response != null) {
                     if (!response.isNull("data")) {
                         result = new Message(response.getJSONObject("data"));
                     }
                 }
 
-            } catch (IOException e) {
-                Logger.e(e, "message");
             } catch (JSONException e) {
                 Logger.e(e, "message");
             }
@@ -168,10 +172,10 @@ public class UploadActivity extends RUVBaseActivity {
                 File file = new File(filePath);
 
                 file.delete();
-                if(file.getParentFile().isDirectory()) {
+                if (file.getParentFile().isDirectory()) {
                     File directory = file.getParentFile();
 
-                    if(directory.listFiles().length == 0) {
+                    if (directory.listFiles().length == 0) {
                         directory.delete();
                     }
                 }
@@ -179,7 +183,7 @@ public class UploadActivity extends RUVBaseActivity {
                 Logger.e(e, "message");
             }
 
-            if(result == null) {
+            if (result == null) {
                 // finish error
                 setResult(RESULT_CANCELED);
             } else {
