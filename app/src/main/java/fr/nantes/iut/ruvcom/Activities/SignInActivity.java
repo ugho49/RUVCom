@@ -203,7 +203,7 @@ public class SignInActivity extends RUVBaseActivity implements
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        RUVComApplication.mLastLocation = LocationServices.FusedLocationApi.getLastLocation(RUVComApplication.mGoogleApiClient);
+        RUVComApplication.setLastLocation(LocationServices.FusedLocationApi.getLastLocation(RUVComApplication.mGoogleApiClient));
     }
 
     @Override

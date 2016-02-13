@@ -45,6 +45,16 @@ public class RUVComApplication extends Application implements Application.Activi
         ImageLoader.getInstance().init(config);
     }
 
+    public static void setLastLocation(Location location) {
+        mLastLocation = location;
+
+        String info = "";
+        if (location != null) {
+            info += "lat:" + location.getLatitude() + ", long:" +location.getLongitude();
+        }
+        Logger.i("Location change : " + info);
+    }
+
     @Override
     public void onActivityCreated(Activity arg0, Bundle arg1) {
         Log.e("", "onActivityCreated");
