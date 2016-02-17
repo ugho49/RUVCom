@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.orhanobut.logger.Logger;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -38,7 +39,8 @@ import fr.nantes.iut.ruvcom.Utils.Requestor;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 
-public class ConversationActivity extends RUVBaseActivity implements View.OnClickListener {
+public class ConversationActivity extends RUVBaseActivity
+        implements View.OnClickListener {
 
     // Camera activity request codes
     private static final int CAMERA_CAPTURE_IMAGE_REQUEST_CODE = 100;
@@ -100,6 +102,7 @@ public class ConversationActivity extends RUVBaseActivity implements View.OnClic
         }
 
         applyColor();
+
     }
 
     @Override
@@ -130,7 +133,8 @@ public class ConversationActivity extends RUVBaseActivity implements View.OnClic
         switch (v.getId()) {
             case R.id.sendButton:
                 if(!"".equals(editTextMessage.getText().toString())) {
-                    String m = editTextMessage.getText().toString();
+                    final String m = StringEscapeUtils.escapeJava(editTextMessage.getText().toString());
+                    //final String m = editTextMessage.getText().toString();
                     new sendMessageTask(m).execute();
                 }
                 break;
