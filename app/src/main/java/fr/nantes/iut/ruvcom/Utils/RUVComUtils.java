@@ -5,21 +5,10 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Build;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 /**
  * Created by ughostephan on 08/02/2016.
  */
 public class RUVComUtils {
-
-    public static String colorToHexString(int color) {
-        return String.format("#%06X", 0xFFFFFF & color);
-    }
-
-    public static int hexStringToColor(String hex) {
-        return Color.parseColor(hex);
-    }
 
     public static String humanReadableByteCount(long bytes, boolean si) {
         int unit = si ? 1000 : 1024;
@@ -43,23 +32,5 @@ public class RUVComUtils {
         Color.colorToHSV(color, hsv);
         hsv[2] *= 0.8f;
         return Color.HSVToColor(hsv);
-    }
-
-    public static String getEmojiByUnicode(int unicode){
-        return new String(Character.toChars(unicode));
-    }
-
-    public static String removeUTFCharacters(String data){
-        Pattern p = Pattern.compile("\\\\u(\\p{XDigit}{5})");
-        Matcher m = p.matcher(data);
-        StringBuffer buf = new StringBuffer(data.length());
-        while (m.find()) {
-            String ch = "0x" + m.group(1);
-            int unicode= Integer.decode(ch);
-            ch = getEmojiByUnicode(unicode);
-            m.appendReplacement(buf, Matcher.quoteReplacement(ch));
-        }
-        m.appendTail(buf);
-        return buf.toString();
     }
 }

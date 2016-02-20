@@ -19,7 +19,6 @@ import android.widget.Toast;
 
 import com.orhanobut.logger.Logger;
 
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -133,8 +132,7 @@ public class ConversationActivity extends RUVBaseActivity
         switch (v.getId()) {
             case R.id.sendButton:
                 if(!"".equals(editTextMessage.getText().toString())) {
-                    final String m = StringEscapeUtils.escapeJava(editTextMessage.getText().toString());
-                    //final String m = editTextMessage.getText().toString();
+                    final String m = editTextMessage.getText().toString().trim();
                     new sendMessageTask(m).execute();
                 }
                 break;

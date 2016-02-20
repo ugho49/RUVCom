@@ -19,7 +19,6 @@ import fr.nantes.iut.ruvcom.Activities.FullScreenImageActivity;
 import fr.nantes.iut.ruvcom.Bean.Message;
 import fr.nantes.iut.ruvcom.Bean.User;
 import fr.nantes.iut.ruvcom.R;
-import fr.nantes.iut.ruvcom.Utils.RUVComUtils;
 
 /**
  * Created by ughostephan on 20/01/2016.
@@ -152,7 +151,6 @@ public class ListViewMessagesAdapter extends BaseAdapter {
         } else {
             // MESSAGE TEXT
             String m = message.getMessage();
-            m = RUVComUtils.removeUTFCharacters(m);
             holder.message.setText(m);
         }
 
