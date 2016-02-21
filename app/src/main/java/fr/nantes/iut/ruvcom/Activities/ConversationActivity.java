@@ -3,20 +3,24 @@ package fr.nantes.iut.ruvcom.Activities;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.orhanobut.logger.Logger;
 
 import org.json.JSONArray;
@@ -34,6 +38,7 @@ import fr.nantes.iut.ruvcom.Bean.Message;
 import fr.nantes.iut.ruvcom.Bean.User;
 import fr.nantes.iut.ruvcom.R;
 import fr.nantes.iut.ruvcom.Utils.Config;
+import fr.nantes.iut.ruvcom.Utils.RUVComUtils;
 import fr.nantes.iut.ruvcom.Utils.Requestor;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -101,7 +106,21 @@ public class ConversationActivity extends RUVBaseActivity
         }
 
         applyColor();
+    }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.activity_conversation, menu);
+        MenuItem item_picture = menu.findItem(R.id.action_settings);
+        item_picture.setEnabled(false);
+        if (!"".equals(distantUser.getImageUrl())) {
+            final Bitmap bitmap = ImageLoader.getInstance().loadImageSync(distantUser.getImageUrl());
+            ImageView imageView = new ImageView(getApplicationContext());
+            imageView.setImageBitmap(RUVComUtils.getCroppedBitmap(bitmap));
+            item_picture.setIcon(imageView.getDrawable());
+        }
+        return true;
     }
 
     @Override
