@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="fr.nantes.iut.ruvcom">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -13,12 +12,11 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <uses-permission android:name="fr.nantes.iut.ruvcom.permission.C2D_MESSAGE" />
 
     <permission
         android:name="fr.nantes.iut.ruvcom.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
-
-    <uses-permission android:name="fr.nantes.iut.ruvcom.permission.C2D_MESSAGE" />
 
     <application
         android:name=".RUVComApplication"
@@ -60,8 +58,13 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activities.SettingsActivity"
-            android:screenOrientation="portrait"
             android:label="@string/title_activity_settings"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Activities.PictureMapsActivity"
+            android:label="@string/title_activity_picture_maps"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <receiver
@@ -92,6 +95,11 @@
         <service
             android:name=".gcm.RegistrationIntentService"
             android:exported="false" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
+
     </application>
 
 </manifest>

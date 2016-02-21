@@ -1,5 +1,6 @@
 package fr.nantes.iut.ruvcom.Activities;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -69,6 +70,7 @@ public class ConversationActivity extends RUVBaseActivity
     public static List<Message> messages = new ArrayList<>();
 
     public static Context context;
+    public static Activity activity;
 
 
     @Override
@@ -82,6 +84,7 @@ public class ConversationActivity extends RUVBaseActivity
         messageListView = (ListView) findViewById(R.id.listViewMessages);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         context = getApplicationContext();
+        activity = this;
 
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
@@ -295,7 +298,7 @@ public class ConversationActivity extends RUVBaseActivity
             @Override
             protected String doInBackground(Void... u) {
                 if (adapter == null) {
-                    adapter = new ListViewMessagesAdapter(context, messages, user, distantUser);
+                    adapter = new ListViewMessagesAdapter(activity, messages, user, distantUser);
                 } else {
                     adapter.setList(messages);
                     adapter.setDistantUser(distantUser);

@@ -3,6 +3,10 @@
 
     <group android:checkableBehavior="single">
         <item
+            android:id="@+id/action_pictures_nextToMe"
+            android:icon="@drawable/ic_satellite_black_24dp"
+            android:title="@string/action_pictures_nextToMe" />
+        <item
             android:id="@+id/action_settings"
             android:icon="@drawable/ic_setting_light"
             android:title="@string/action_settings" />

@@ -1,6 +1,7 @@
 package fr.nantes.iut.ruvcom.Utils;
 
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -9,6 +10,13 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.os.Build;
+
+import com.orhanobut.logger.Logger;
+
+import java.io.FileOutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by ughostephan on 08/02/2016.
@@ -59,5 +67,28 @@ public class RUVComUtils {
         //Bitmap _bmp = Bitmap.createScaledBitmap(output, 60, 60, false);
         //return _bmp;
         return output;
+    }
+
+    public static boolean saveImageToInternalStorage(Context context, Bitmap image) {
+
+        try {
+            // Create a media file name
+            final String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss",
+                    Locale.getDefault()).format(new Date());
+
+            final String name = "IMG_" + timeStamp + ".jpg";
+            // Use the compress method on the Bitmap object to write image to
+            // the OutputStream
+            FileOutputStream fos = context.openFileOutput(name, Context.MODE_PRIVATE);
+
+            // Writing the bitmap to the output stream
+            image.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            fos.close();
+
+            return true;
+        } catch (Exception e) {
+            Logger.e("message", e);
+            return false;
+        }
     }
 }

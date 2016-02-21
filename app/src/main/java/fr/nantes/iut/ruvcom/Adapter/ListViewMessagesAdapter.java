@@ -1,7 +1,11 @@
 package fr.nantes.iut.ruvcom.Adapter;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +23,7 @@ import fr.nantes.iut.ruvcom.Activities.FullScreenImageActivity;
 import fr.nantes.iut.ruvcom.Bean.Message;
 import fr.nantes.iut.ruvcom.Bean.User;
 import fr.nantes.iut.ruvcom.R;
+import fr.nantes.iut.ruvcom.Utils.RUVComUtils;
 
 /**
  * Created by ughostephan on 20/01/2016.
@@ -27,14 +32,16 @@ public class ListViewMessagesAdapter extends BaseAdapter {
 
     private List<Message> list;
     private final Context _c;
+    private final Activity activity;
     private User user;
     private User distantUser;
     private String url_image = "";
 
     private final ImageLoader imageLoader = ImageLoader.getInstance();
 
-    public ListViewMessagesAdapter(Context context, List<Message> list, User user, User distantUser) {
-        this._c = context;
+    public ListViewMessagesAdapter(Activity activity, List<Message> list, User user, User distantUser) {
+        this.activity = activity;
+        this._c = activity.getApplicationContext();
         this.list = list;
         this.user = user;
         this.distantUser = distantUser;
@@ -143,8 +150,31 @@ public class ListViewMessagesAdapter extends BaseAdapter {
             holder.image.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    // TODO : téléchargement de l'image
-                    Toast.makeText(_c, "A venir téléchargement de l'image", Toast.LENGTH_SHORT).show();
+                    AlertDialog.Builder ad = new AlertDialog.Builder(activity);
+                    ad.setTitle("Sauvegarder l'image");
+                    ad.setMessage("Voulez-vous sauvegarder l'image sur votre appareil ?");
+                    ad.setPositiveButton("Oui", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            final Bitmap bitmap = imageLoader.loadImageSync(message.getPhoto().getUrl());
+
+                            if (RUVComUtils.saveImageToInternalStorage(_c, bitmap)) {
+                                Toast.makeText(_c, "L'image est correctement sauvegardé sur votre appareil", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(_c, "Erreur lors de la sauvegarde ...", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                    ad.setNegativeButton("Non", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Code that is executed when clicking NO
+                            dialog.dismiss();
+                        }
+                    });
+                    AlertDialog alert = ad.create();
+                    alert.show();
+
                     return false;
                 }
             });

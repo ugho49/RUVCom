@@ -6,6 +6,8 @@
 
     <string name="action_settings">Paramètres</string>
 
+    <string name="action_pictures_nextToMe">Photos à proximités</string>
+
     <string name="loading">Chargement ...</string>
 
     <string name="internal_error">Erreur de chargement</string>
@@ -27,6 +29,7 @@
     <string name="title_activity_settings">Paramètres</string>
     <string name="title_activity_upload">Envoi de l\'image au serveur</string>
     <string name="title_activity_full_screen_image">Image en plein écran</string>
+    <string name="title_activity_picture_maps">Photos à proximités</string>
 
     <string name="pref_header_notifications">Notifications</string>
     <string name="pref_header_advance">Avancé</string>
