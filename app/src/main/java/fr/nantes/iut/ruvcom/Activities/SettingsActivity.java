@@ -65,20 +65,12 @@ public class SettingsActivity extends RUVBaseActivity
     }
 
     @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        //overridePendingTransition(R.anim.in_left_to_right, R.anim.out_left_to_right);
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
-                //overridePendingTransition(R.anim.in_left_to_right, R.anim.out_left_to_right);
-                break;
+                return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 

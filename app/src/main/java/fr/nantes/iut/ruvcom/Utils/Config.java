@@ -25,6 +25,8 @@ public class Config {
     // PARAM : NULL
     public static final String API_USER_GET_ALL = BASE_API_URL + "getUsers";
     // PARAM : idUser
+    public static final String API_PICTURES_LOCATED_FOR_MAP = BASE_API_URL + "locatesPictures/%s";
+    // PARAM : idUser
     public static final String API_USER_GET_ALL_EXCEPT_ME = BASE_API_URL + "getUsers/%s";
     // PARAM : googleID, displayName, email
     public static final String API_USER_CREATE = BASE_API_URL + "createUser/%s/%s/%s";
