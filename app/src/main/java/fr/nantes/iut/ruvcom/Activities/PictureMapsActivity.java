@@ -34,6 +34,7 @@ public class PictureMapsActivity extends RUVBaseActivity implements OnMapReadyCa
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_clear_white_24dp);
         }
 
         applyColor();
@@ -42,7 +43,7 @@ public class PictureMapsActivity extends RUVBaseActivity implements OnMapReadyCa
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        overridePendingTransition(R.anim.in_left_to_right, R.anim.out_left_to_right);
+        //overridePendingTransition(R.anim.in_left_to_right, R.anim.out_left_to_right);
     }
 
     @Override
@@ -50,7 +51,7 @@ public class PictureMapsActivity extends RUVBaseActivity implements OnMapReadyCa
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
-                overridePendingTransition(R.anim.in_left_to_right, R.anim.out_left_to_right);
+                //overridePendingTransition(R.anim.in_left_to_right, R.anim.out_left_to_right);
                 return true;
         }
         return super.onOptionsItemSelected(item);

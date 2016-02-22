@@ -208,10 +208,10 @@ public class MainActivity extends RUVBaseActivity
             signOut();
         } else if (id == R.id.action_settings) {
             startActivity(new Intent(getBaseContext(), SettingsActivity.class));
-            overridePendingTransition(R.anim.in_right_to_left, R.anim.out_right_to_left);
+            //overridePendingTransition(R.anim.in_right_to_left, R.anim.out_right_to_left);
         } else if (id == R.id.action_pictures_nextToMe) {
             startActivity(new Intent(getBaseContext(), PictureMapsActivity.class));
-            overridePendingTransition(R.anim.in_right_to_left, R.anim.out_right_to_left);
+            //overridePendingTransition(R.anim.in_right_to_left, R.anim.out_right_to_left);
         }
 
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
