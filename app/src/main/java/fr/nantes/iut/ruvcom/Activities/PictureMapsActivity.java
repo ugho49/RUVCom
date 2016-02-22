@@ -78,15 +78,6 @@ public class PictureMapsActivity extends RUVBaseActivity implements OnMapReadyCa
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -193,8 +184,7 @@ public class PictureMapsActivity extends RUVBaseActivity implements OnMapReadyCa
         private View view;
 
         public CustomInfoWindowAdapter() {
-            view = getLayoutInflater().inflate(R.layout.custom_marker,
-                    null);
+            view = getLayoutInflater().inflate(R.layout.custom_marker, null);
         }
 
         @Override
@@ -236,17 +226,6 @@ public class PictureMapsActivity extends RUVBaseActivity implements OnMapReadyCa
                             }
                         });
             }
-
-            /*image.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    /*Intent fullScreenImageIntent = new Intent(getApplicationContext(), FullScreenImageActivity.class);
-                    fullScreenImageIntent.putExtra("imageUrl", locatedPicture.getPhoto().getUrl());
-                    fullScreenImageIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(fullScreenImageIntent);*/
-                    //Toast.makeText(getApplicationContext(), "coucou", Toast.LENGTH_SHORT).show();
-                /*}
-            });*/
 
             title.setText(locatedPicture.getDisplayName());
 

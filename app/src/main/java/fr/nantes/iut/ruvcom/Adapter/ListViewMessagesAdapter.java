@@ -1,17 +1,13 @@
 package fr.nantes.iut.ruvcom.Adapter;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.github.siyamed.shapeimageview.CircularImageView;
 import com.github.siyamed.shapeimageview.RoundedImageView;
@@ -23,7 +19,6 @@ import fr.nantes.iut.ruvcom.Activities.FullScreenImageActivity;
 import fr.nantes.iut.ruvcom.Bean.Message;
 import fr.nantes.iut.ruvcom.Bean.User;
 import fr.nantes.iut.ruvcom.R;
-import fr.nantes.iut.ruvcom.Utils.RUVComUtils;
 
 /**
  * Created by ughostephan on 20/01/2016.
@@ -147,37 +142,6 @@ public class ListViewMessagesAdapter extends BaseAdapter {
                 }
             });
 
-            holder.image.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    AlertDialog.Builder ad = new AlertDialog.Builder(activity);
-                    ad.setTitle("Sauvegarder l'image");
-                    ad.setMessage("Voulez-vous sauvegarder l'image sur votre appareil ?");
-                    ad.setPositiveButton("Oui", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            final Bitmap bitmap = imageLoader.loadImageSync(message.getPhoto().getUrl());
-
-                            if (RUVComUtils.saveImageToInternalStorage(_c, bitmap)) {
-                                Toast.makeText(_c, "L'image est correctement sauvegardé sur votre appareil", Toast.LENGTH_SHORT).show();
-                            } else {
-                                Toast.makeText(_c, "Erreur lors de la sauvegarde ...", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
-                    ad.setNegativeButton("Non", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            // Code that is executed when clicking NO
-                            dialog.dismiss();
-                        }
-                    });
-                    AlertDialog alert = ad.create();
-                    alert.show();
-
-                    return false;
-                }
-            });
         } else {
             // MESSAGE TEXT
             String m = message.getMessage();
