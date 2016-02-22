@@ -8,8 +8,8 @@ android {
         applicationId "fr.nantes.iut.ruvcom"
         minSdkVersion 19
         targetSdkVersion 23
-        versionCode 15
-        versionName "1.1.0"
+        versionCode 16
+        versionName "1.0.0_stable"
         multiDexEnabled = false
     }
     buildTypes {
