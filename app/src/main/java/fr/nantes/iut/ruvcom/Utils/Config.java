@@ -5,11 +5,11 @@ package fr.nantes.iut.ruvcom.Utils;
  */
 public class Config {
     // Secret token pour l'api
-    public static final String SECRET_TOKEN = "Ok2CCaEaHngyNPMqPRcE5MkvzIAwpnrJc5zECIO9fAW9dnxI1zppPvRKu7pnU8tbeFrjjke5m8wDacadWWWOFgiLcr1xvdxhUVMA1WWTJkLiFFmFAAGwS";
+    public static final String SECRET_TOKEN = "SECRET_TOKEN";
     // Directory name to store captured images and videos
     public static final String LOCAL_IMAGE_DIRECTORY_NAME = "RUVComFileUpload";
     // GOOGLE API KEY
-    public static final String API_KEY = "AIzaSyCoFVlSOijLQC1HlQswRQ3-YI8EkeODTZQ";
+    public static final String API_KEY = "API_KEY";
     // SENDER ID
     public static final String SENDER_ID = "658363483971";
     // Url de base de L'API
